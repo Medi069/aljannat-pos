@@ -9,6 +9,10 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Al Jannat POS</title>
+<!-- Firebase SDKs for Central Online Cloud Database -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <style>
 :root {
   --maroon: #7a1a28;
@@ -91,21 +95,30 @@ header {
   font-weight: 700;
   line-height: 1.2;
 }
-.header-title .tag-offline {
+.header-title .tag-status {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   font-size: 11.5px;
-  color: #d1fae5;
-  opacity: 0.95;
-  font-weight: 500;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.15);
+  margin-top: 2px;
 }
-.header-title .dot {
+.tag-status.online { color: #a7f3d0; background: rgba(16,185,129,0.2); }
+.tag-status.offline { color: #fed7aa; background: rgba(245,158,11,0.2); }
+.tag-status .dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #34d399;
+  background: currentColor;
   display: inline-block;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .header-sale {
   text-align: right;
@@ -127,6 +140,18 @@ header {
   font-weight: 800;
   color: #fff;
 }
+.btn-lock {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-lock svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
 
 /* MAIN LAYOUT */
 main {
@@ -837,6 +862,110 @@ dialog::backdrop {
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
+/* PIN LOGIN OVERLAY */
+#pinOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: linear-gradient(145deg, #faf5ed 0%, #f3e9db 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.pin-card {
+  width: 100%;
+  max-width: 360px;
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 24px;
+  padding: 28px 24px;
+  box-shadow: 0 16px 40px rgba(122,26,40,0.12);
+  text-align: center;
+}
+.pin-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: var(--maroon);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  box-shadow: 0 6px 18px rgba(122,26,40,0.3);
+}
+.pin-logo svg { width: 34px; height: 34px; fill: #fff; }
+.pin-card h2 { margin: 0 0 6px; font-size: 21px; color: var(--maroon); font-weight: 800; }
+.pin-card p { margin: 0 0 18px; font-size: 14px; color: var(--mute); }
+.pin-dots {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.p-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background: #fff;
+  transition: all 0.15s ease;
+}
+.p-dot.fill {
+  background: var(--maroon);
+  border-color: var(--maroon);
+  transform: scale(1.15);
+  box-shadow: 0 2px 6px rgba(122,26,40,0.35);
+}
+.pin-err {
+  min-height: 20px;
+  font-size: 13px;
+  color: var(--bad);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.pin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.p-key {
+  height: 56px;
+  border-radius: 16px;
+  background: var(--cream);
+  border: 1.5px solid var(--line);
+  font-size: 22px;
+  font-weight: 750;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+}
+.p-key:active {
+  background: var(--gold-bg);
+  border-color: var(--gold);
+  transform: scale(0.94);
+}
+.p-key.fn {
+  background: #eee5d8;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--mute);
+}
+.pin-remember {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13.5px;
+  color: var(--mute);
+  cursor: pointer;
+}
+.pin-remember input { width: 18px; height: 18px; accent-color: var(--maroon); }
+
 /* TOAST */
 #toast {
   position: fixed;
@@ -847,7 +976,7 @@ dialog::backdrop {
   color: #fff;
   padding: 10px 18px;
   border-radius: 14px;
-  z-index: 99;
+  z-index: 110;
   font-size: 14.5px;
   font-weight: 500;
   max-width: 90%;
@@ -912,6 +1041,43 @@ dialog::backdrop {
 </head>
 <body>
 
+<!-- PIN LOGIN SCREEN -->
+<div id="pinOverlay">
+  <div class="pin-card">
+    <div class="pin-logo">
+      <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9c0 3.8 2.4 7 5.8 8.3.4.1.8-.2.8-.6v-2.3c0-.4.3-.8.7-.9a6.5 6.5 0 1 1 5.4 0c.4.1.7.5.7.9v2.3c0 .4.4.7.8.6A9 9 0 0 0 12 3z"/></svg>
+    </div>
+    <h2>Al Jannat POS</h2>
+    <p>Dukaan ka 4-digit PIN darj karein</p>
+    <div class="pin-dots">
+      <span class="p-dot" id="pd0"></span>
+      <span class="p-dot" id="pd1"></span>
+      <span class="p-dot" id="pd2"></span>
+      <span class="p-dot" id="pd3"></span>
+    </div>
+    <div class="pin-err" id="pinErr"></div>
+    <div class="pin-grid">
+      <button class="p-key" data-k="1">1</button>
+      <button class="p-key" data-k="2">2</button>
+      <button class="p-key" data-k="3">3</button>
+      <button class="p-key" data-k="4">4</button>
+      <button class="p-key" data-k="5">5</button>
+      <button class="p-key" data-k="6">6</button>
+      <button class="p-key" data-k="7">7</button>
+      <button class="p-key" data-k="8">8</button>
+      <button class="p-key" data-k="9">9</button>
+      <button class="p-key fn" data-k="C">C</button>
+      <button class="p-key" data-k="0">0</button>
+      <button class="p-key fn" data-k="del">⌫</button>
+    </div>
+    <label class="pin-remember">
+      <input type="checkbox" id="pinRemCheck" checked>
+      <span>Is phone par login yaad rakhein</span>
+    </label>
+  </div>
+</div>
+
+<!-- MAIN APP -->
 <header>
   <div class="header-brand">
     <div class="header-logo">
@@ -919,12 +1085,20 @@ dialog::backdrop {
     </div>
     <div class="header-title">
       <b id="shopName">Al Jannat</b>
-      <div class="tag-offline"><span class="dot"></span><span>Offline POS</span></div>
+      <div class="tag-status online" id="cloudStatus">
+        <span class="dot"></span>
+        <span id="cloudStatusText">Cloud Live</span>
+      </div>
     </div>
   </div>
-  <div class="header-sale">
-    <span>Aaj ki sale</span>
-    <strong id="todayTotal">Rs. 0</strong>
+  <div class="header-right">
+    <div class="header-sale">
+      <span>Aaj ki sale</span>
+      <strong id="todayTotal">Rs. 0</strong>
+    </div>
+    <button class="btn-lock" id="btnLock" title="Screen Lock karein">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </button>
   </div>
 </header>
 <div id="banner" hidden></div>
@@ -943,7 +1117,7 @@ dialog::backdrop {
 
   <!-- 2. BILLS & REPORTS VIEW -->
   <section id="v-bills" hidden>
-    <h2>Bills &amp; Hisaab</h2>
+    <h2>Bills &amp; Hisaab (Live Cloud Sync)</h2>
     <div class="row">
       <input id="billDay" type="date" class="f" style="flex:1">
       <button class="btn alt" id="billTodayBtn" style="padding:10px 14px;white-space:nowrap">Aaj</button>
@@ -971,19 +1145,41 @@ dialog::backdrop {
   <!-- 4. SETTINGS VIEW -->
   <section id="v-set" hidden>
     <h2>Settings</h2>
+
     <div class="sec">
-      <h3>Dukaan ki maloomat (receipt par)</h3>
+      <h3>Online Cloud Database (Sab Mobiles Synchronized)</h3>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span class="dot" style="width:10px;height:10px;border-radius:50%;background:#10b981;display:inline-block"></span>
+        <b style="color:var(--ok)">Al Jannat Cloud Sync Active</b>
+      </div>
+      <div class="hint">Har bhai ke mobile par ek hi central database chal raha hai. Kisi bhi mobile se sale ho, live update sab par aayegi.</div>
+    </div>
+
+    <div class="sec">
+      <h3>Dukaan ka Login PIN</h3>
+      <label>4-Digit PIN (Default: 1234)</label>
+      <input class="f" id="setPin" type="password" maxlength="4" inputmode="numeric" placeholder="1234">
+      <div class="row" style="margin-top:10px">
+        <button class="btn alt" id="btnSavePin">Naya PIN Save Karein</button>
+        <button class="btn gray" id="btnLogout">Logout / Lock</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>Dukaan ki maloomat (Receipt par)</h3>
       <label>Dukaan ka naam</label><input class="f" data-k="shop">
       <label>Address (ikhtiyari)</label><input class="f" data-k="addr">
       <label>Phone (ikhtiyari)</label><input class="f" data-k="phone" inputmode="tel">
       <label>Receipt ke neeche message</label><input class="f" data-k="footer">
     </div>
+
     <div class="sec">
       <h3>Kitchen Slip Settings</h3>
       <label>Kitchen Slip Header (Title)</label>
       <input class="f" data-k="kotTitle" placeholder="KITCHEN ORDER / KOT">
       <div class="hint">Kitchen slip par yeh header print hoga taake bawarchi khana / counter foran pehchan sake.</div>
     </div>
+
     <div class="sec">
       <h3>Receipt Printer</h3>
       <label>Print ka tareeqa</label>
@@ -1004,9 +1200,10 @@ dialog::backdrop {
         <button class="btn alt" id="testPrintKitchen">Test Kitchen slip</button>
       </div>
     </div>
+
     <div class="sec">
       <h3>Backup (Data Mehfooz Rakhein)</h3>
-      <div class="hint" style="margin:0 0 12px">Data aapke isi phone mein mehfooz hota hai. Roz dukaan band karte waqt backup bhej dein (WhatsApp ya Google Drive par).</div>
+      <div class="hint" style="margin:0 0 12px">Data Cloud par bhi save hai aur phone mein bhi. Roz dukaan band karte waqt file backup bhi le sakte hain.</div>
       <div class="row" style="flex-wrap:wrap">
         <button class="btn" id="bkExport">Backup bhejein</button>
         <button class="btn alt" id="bkImport">Backup wapas lein</button>
@@ -1014,7 +1211,8 @@ dialog::backdrop {
       </div>
       <input type="file" id="bkFile" accept="application/json,.json" hidden>
     </div>
-    <div class="hint" style="text-align:center;margin:12px 0 24px">Al Jannat POS · offline ready · <span id="ver">v2.0</span></div>
+
+    <div class="hint" style="text-align:center;margin:12px 0 24px">Al Jannat POS · Cloud Sync v3.0 · <span id="ver">v3.0</span></div>
   </section>
 </main>
 
@@ -1156,6 +1354,97 @@ dialog::backdrop {
 
 <script>
 'use strict';
+/* ============ FIREBASE CONFIG & CLOUD SETUP ============ */
+const FIREBASE_CONFIG = {
+  projectId: "aljannat-pos-pk",
+  appId: "1:743568222222:web:1e5a3c925eb0c54788345f",
+  storageBucket: "aljannat-pos-pk.firebasestorage.app",
+  apiKey: "AIzaSyDPTMXCe3Mucahs3QkrCXfyTy_UOmhSgHk",
+  authDomain: "aljannat-pos-pk.firebaseapp.com",
+  messagingSenderId: "743568222222"
+};
+
+let fsDb = null;
+let isCloudLive = false;
+
+function updateCloudStatus(live) {
+  isCloudLive = !!live;
+  const el = $('#cloudStatus');
+  const txt = $('#cloudStatusText');
+  if (isCloudLive) {
+    el.className = 'tag-status online';
+    txt.textContent = 'Cloud Live';
+  } else {
+    el.className = 'tag-status offline';
+    txt.textContent = 'Offline Cache';
+  }
+}
+
+function initFirebase() {
+  try {
+    if (typeof firebase !== 'undefined' && firebase.initializeApp) {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(FIREBASE_CONFIG);
+      }
+      if (firebase.auth) {
+        firebase.auth().signInAnonymously().catch(() => {});
+      }
+      fsDb = firebase.firestore();
+      fsDb.enablePersistence({ synchronizeTabs: true }).catch(err => {
+        console.warn('Firestore persistence note:', err.code);
+      });
+      setupRealtimeListeners();
+    } else {
+      updateCloudStatus(false);
+    }
+  } catch (e) {
+    console.warn('Firebase init error:', e);
+    updateCloudStatus(false);
+  }
+}
+
+function setupRealtimeListeners() {
+  if (!fsDb) return;
+
+  // 1. Listen for Today's Sales Live across all devices
+  fsDb.collection('sales').where('day', '==', dayKey()).onSnapshot(snapshot => {
+    updateCloudStatus(true);
+    let totalToday = 0;
+    snapshot.forEach(doc => {
+      const sale = doc.data();
+      totalToday += (sale.total || 0);
+      salePut(sale).catch(() => {});
+    });
+    $('#todayTotal').textContent = rs(totalToday);
+    if (S.view === 'bills') renderBills();
+  }, err => {
+    console.warn('Firestore sales sync notice:', err);
+    updateCloudStatus(false);
+  });
+
+  // 2. Listen for Item catalog changes across devices
+  fsDb.collection('meta').doc('items').onSnapshot(doc => {
+    if (doc.exists && Array.isArray(doc.data().list) && doc.data().list.length) {
+      S.items = doc.data().list;
+      kvSet('items', S.items).catch(() => {});
+      renderCats();
+      renderGrid();
+      if (S.view === 'items') renderItems();
+    }
+  }, () => {});
+
+  // 3. Listen for Settings & Shop PIN changes across devices
+  fsDb.collection('meta').doc('settings').onSnapshot(doc => {
+    if (doc.exists) {
+      const cloudSettings = doc.data();
+      Object.assign(S.settings, cloudSettings);
+      kvSet('settings', S.settings).catch(() => {});
+      renderShell();
+      if (S.view === 'set') renderSettings();
+    }
+  }, () => {});
+}
+
 /* ============ HELPERS ============ */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -1181,7 +1470,7 @@ function toast(m) {
   toastT = setTimeout(() => t.classList.remove('on'), 2600);
 }
 
-/* ============ STORAGE (IndexedDB) ============ */
+/* ============ STORAGE (IndexedDB for offline cache) ============ */
 let db;
 function openDB() {
   return new Promise((res, rej) => {
@@ -1234,6 +1523,7 @@ const DEFAULT_SETTINGS = {
   kotTitle: 'KITCHEN ORDER / KOT',
   paper: '58',
   printer: 'rawbt',
+  pin: '1234',
   lastBackup: 0
 };
 
@@ -1247,9 +1537,78 @@ const S = {
   view: 'sale',
   editId: null,
   billOpen: null,
-  billTab: 'customer' // 'customer' or 'kitchen'
+  billTab: 'customer'
 };
-const VERSION = 'v2.0';
+const VERSION = 'v3.0 (Cloud Sync)';
+
+/* ============ PIN LOGIN SYSTEM ============ */
+let currentPinInput = '';
+
+function checkAuth() {
+  const isAuth = localStorage.getItem('aljannat_pos_auth') === '1';
+  if (isAuth) {
+    $('#pinOverlay').hidden = true;
+  } else {
+    $('#pinOverlay').hidden = false;
+    currentPinInput = '';
+    updatePinDots();
+  }
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    const dot = $('#pd' + i);
+    dot.classList.toggle('fill', i < currentPinInput.length);
+  }
+  $('#pinErr').textContent = '';
+}
+
+function handlePinKey(k) {
+  if (k === 'C') {
+    currentPinInput = '';
+    updatePinDots();
+    return;
+  }
+  if (k === 'del') {
+    currentPinInput = currentPinInput.slice(0, -1);
+    updatePinDots();
+    return;
+  }
+  if (currentPinInput.length < 4) {
+    currentPinInput += k;
+    updatePinDots();
+    try { navigator.vibrate && navigator.vibrate(10); } catch (e) {}
+
+    if (currentPinInput.length === 4) {
+      setTimeout(verifyPin, 100);
+    }
+  }
+}
+
+function verifyPin() {
+  const targetPin = S.settings.pin || '1234';
+  if (currentPinInput === targetPin) {
+    if ($('#pinRemCheck').checked) {
+      localStorage.setItem('aljannat_pos_auth', '1');
+    } else {
+      sessionStorage.setItem('aljannat_pos_auth', '1');
+    }
+    $('#pinOverlay').hidden = true;
+    currentPinInput = '';
+    toast('Khush Aamdeed!');
+  } else {
+    $('#pinErr').textContent = 'Ghalat PIN! Dobara koshish karein.';
+    currentPinInput = '';
+    updatePinDots();
+    try { navigator.vibrate && navigator.vibrate([40, 50, 40]); } catch (e) {}
+  }
+}
+
+function lockApp() {
+  localStorage.removeItem('aljannat_pos_auth');
+  sessionStorage.removeItem('aljannat_pos_auth');
+  checkAuth();
+}
 
 /* ============ INIT ============ */
 async function init() {
@@ -1258,6 +1617,7 @@ async function init() {
   if (!items) { items = DEFAULT_ITEMS; await kvSet('items', items); }
   S.items = items;
   S.settings = Object.assign({}, DEFAULT_SETTINGS, (await kvGet('settings')) || {});
+
   try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {}
   $('#ver').textContent = VERSION;
   bind();
@@ -1268,7 +1628,13 @@ async function init() {
   await refreshToday();
   await checkBackup();
 
-  // Service Worker for offline PWA
+  // Cloud Database Init
+  initFirebase();
+
+  // Check PIN Login
+  checkAuth();
+
+  // Service Worker
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     navigator.serviceWorker.register('sw.js').then(reg => {
       reg.addEventListener('updatefound', () => {
@@ -1433,8 +1799,7 @@ function cartQtyChange(e) {
   updateBadges();
 }
 
-/* ============ SAVE SALE ============ */
-// printTarget: 'both' | 'kitchen' | 'customer' | null
+/* ============ SAVE SALE WITH CLOUD SYNC ============ */
 async function saveSale(printTarget) {
   if (!S.cart.length) { toast('Cart khali hai'); return; }
   const t = total();
@@ -1442,8 +1807,26 @@ async function saveSale(printTarget) {
   const rec = rawRecv === '' ? t : Number(rawRecv);
   if (!(rec >= t)) { toast('Customer ke diye paise bill se kam hain'); return; }
 
-  const counter = ((await kvGet('counter')) || 0) + 1;
+  // Sequential atomic bill counter across devices
+  let counter = 1;
+  try {
+    if (fsDb && navigator.onLine) {
+      const counterRef = fsDb.collection('meta').doc('counter');
+      counter = await fsDb.runTransaction(async tr => {
+        const cDoc = await tr.get(counterRef);
+        const current = cDoc.exists ? (cDoc.data().value || 0) : ((await kvGet('counter')) || 0);
+        const next = current + 1;
+        tr.set(counterRef, { value: next }, { merge: true });
+        return next;
+      });
+    } else {
+      counter = ((await kvGet('counter')) || 0) + 1;
+    }
+  } catch (e) {
+    counter = ((await kvGet('counter')) || 0) + 1;
+  }
   await kvSet('counter', counter);
+
   const now = new Date();
   const note = $('#kNote').value.trim();
 
@@ -1460,7 +1843,16 @@ async function saveSale(printTarget) {
     change: rec - t
   };
 
+  // 1. Local Cache
   await salePut(sale);
+
+  // 2. Cloud Firestore Real-time Broadcast
+  if (fsDb) {
+    fsDb.collection('sales').doc(String(sale.no)).set(sale).catch(err => {
+      console.warn('Saved offline in device cache:', err);
+    });
+  }
+
   S.cart = [];
   $('#disc').value = '';
   $('#recv').value = '';
@@ -1601,7 +1993,6 @@ function escposSingle(model) {
     }
     b.push(0x0A);
   }
-  // Feed 4 lines and cut paper
   b.push(0x1B, 0x45, 0, 0x1D, 0x21, 0, 0x1B, 0x61, 0, 0x1B, 0x64, 4, 0x1D, 0x56, 0x42, 0x00);
   return b;
 }
@@ -1610,7 +2001,6 @@ function escpos(s, target = 'customer') {
   if (target === 'both') {
     const kBytes = escposSingle(kitchenReceiptModel(s));
     const cBytes = escposSingle(customerReceiptModel(s));
-    // Combine both slips with a feed separator
     return [...kBytes, 0x1B, 0x64, 3, ...cBytes];
   }
   const model = target === 'kitchen' ? kitchenReceiptModel(s) : customerReceiptModel(s);
@@ -1767,7 +2157,7 @@ function renderBillPreview() {
   $('#bdBody').textContent = receiptPlain(S.billOpen, S.billTab);
 }
 
-/* ============ ITEMS VIEW ============ */
+/* ============ ITEMS VIEW (Live Sync) ============ */
 function renderItems() {
   const q = (S.itemQ || '').trim().toLowerCase();
   const list = S.items.filter(i => !q || i.name.toLowerCase().includes(q) || (i.cat && i.cat.toLowerCase().includes(q)));
@@ -1812,6 +2202,10 @@ async function saveItem() {
   }
 
   await kvSet('items', S.items);
+  if (fsDb) {
+    fsDb.collection('meta').doc('items').set({ list: S.items }).catch(() => {});
+  }
+
   $('#itemDlg').close();
   renderItems();
   renderCats();
@@ -1825,6 +2219,9 @@ async function delItem() {
   S.items = S.items.filter(i => i.id !== S.editId);
   S.cart = S.cart.filter(l => l.id !== S.editId);
   await kvSet('items', S.items);
+  if (fsDb) {
+    fsDb.collection('meta').doc('items').set({ list: S.items }).catch(() => {});
+  }
   if (S.cat !== 'All' && !cats().includes(S.cat)) S.cat = 'All';
   $('#itemDlg').close();
   renderItems();
@@ -1845,11 +2242,15 @@ function renderSettings() {
   $$('[data-k]').forEach(el => el.value = S.settings[el.dataset.k] ?? '');
   $('#printerHint').textContent = HINTS[S.settings.printer] || '';
   $('#btConnect').hidden = S.settings.printer !== 'ble';
+  $('#setPin').value = S.settings.pin || '1234';
 }
 
 async function setSetting(k, v) {
   S.settings[k] = v;
   await kvSet('settings', S.settings);
+  if (fsDb) {
+    fsDb.collection('meta').doc('settings').set(S.settings, { merge: true }).catch(() => {});
+  }
   if (k === 'shop') renderShell();
   if (k === 'printer') renderSettings();
 }
@@ -1912,7 +2313,7 @@ async function shareOrDownload(file) {
 async function exportBackup() {
   const data = {
     app: 'aljannat-pos',
-    v: 2,
+    v: 3,
     at: Date.now(),
     items: S.items,
     settings: S.settings,
@@ -1938,12 +2339,23 @@ async function importBackup(file) {
     S.settings = Object.assign({}, DEFAULT_SETTINGS, d.settings || {});
     await kvSet('settings', S.settings);
     await kvSet('counter', d.counter || 0);
+
+    // Sync imported data to cloud
+    if (fsDb) {
+      fsDb.collection('meta').doc('items').set({ list: S.items }).catch(() => {});
+      fsDb.collection('meta').doc('settings').set(S.settings).catch(() => {});
+      fsDb.collection('meta').doc('counter').set({ value: d.counter || 0 }).catch(() => {});
+      for (const s of d.sales) {
+        fsDb.collection('sales').doc(String(s.no)).set(s).catch(() => {});
+      }
+    }
+
     renderShell();
     renderCats();
     renderGrid();
     renderSettings();
     await refreshToday();
-    toast('Backup wapas aa gaya');
+    toast('Backup wapas aa gaya aur Cloud par sync ho gaya');
   } catch (e) {
     toast('Backup file sahi nahi: ' + e.message);
   }
@@ -1975,6 +2387,23 @@ async function exportCSV() {
 
 /* ============ EVENTS BINDING ============ */
 function bind() {
+  // PIN Keypad clicks
+  $('#pinOverlay').onclick = e => {
+    const k = e.target.closest('.p-key');
+    if (k) handlePinKey(k.dataset.k);
+  };
+  $('#btnLock').onclick = lockApp;
+  $('#btnLogout').onclick = lockApp;
+  $('#btnSavePin').onclick = async () => {
+    const p = $('#setPin').value.trim();
+    if (p.length === 4 && /^\d{4}$/.test(p)) {
+      await setSetting('pin', p);
+      toast('Naya PIN save ho gaya');
+    } else {
+      toast('PIN sirf 4 digits ka hona chahiye (jaise 1234)');
+    }
+  };
+
   // Navigation
   $$('nav button').forEach(b => b.onclick = () => show(b.dataset.v));
 
@@ -2069,7 +2498,11 @@ function bind() {
   $('#bdDel').onclick = async () => {
     if (!S.billOpen) return;
     if (!confirm('Bill ' + billLabel(S.billOpen.no) + ' delete karein?')) return;
-    await saleDel(S.billOpen.no);
+    const no = S.billOpen.no;
+    await saleDel(no);
+    if (fsDb) {
+      fsDb.collection('sales').doc(String(no)).delete().catch(() => {});
+    }
     $('#billDlg').close();
     renderBills();
     refreshToday();

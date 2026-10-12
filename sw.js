@@ -1,6 +1,5 @@
-// Al Jannat POS - offline cache v2.
-// App open hote hi cached version chalta hai, aur internet ho to naya version download ho kar agli baar se lag jata hai.
-const CACHE = 'aljannat-pos-v2';
+// Al Jannat POS - offline cache v3 with Firebase Cloud Sync.
+const CACHE = 'aljannat-pos-v3';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -21,6 +20,10 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+  // Pass third-party CDN / Firebase requests straight to network
+  if (!e.request.url.startsWith(self.location.origin)) {
+    return;
+  }
   e.respondWith(
     caches.open(CACHE).then(async cache => {
       const hit = await cache.match(e.request, { ignoreSearch: true });
