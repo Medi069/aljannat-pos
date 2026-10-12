@@ -1318,7 +1318,7 @@ dialog::backdrop {
     </div>
     <div class="btn-grid-2">
       <button class="btn gray" id="saveOnly">Sirf save karein</button>
-      <button class="btn gray" id="clearCart">Cart khali</button>
+      <button class="btn" id="clearCart" style="background:#fee2e2;color:#b91c1c;border:1.5px solid #f87171;font-weight:700">✕ Order Dismiss Karein</button>
     </div>
   </div>
 </div></dialog>
@@ -2588,7 +2588,11 @@ function bind() {
   $('#saveCustomer').onclick = () => saveSale('customer');
   $('#saveOnly').onclick = () => saveSale(null);
   $('#clearCart').onclick = () => {
-    if (!S.cart.length || confirm('Cart khali karein?')) {
+    if (!S.cart.length) {
+      $('#cartDlg').close();
+      return;
+    }
+    if (confirm('Yeh order dismiss / cancel karein? (Cart khali ho jayegi)')) {
       S.cart = [];
       $('#disc').value = '';
       $('#recv').value = '';
@@ -2596,6 +2600,7 @@ function bind() {
       $('#cartDlg').close();
       updateBadges();
       renderCartBar();
+      toast('Order dismiss kar diya gaya');
     }
   };
 
