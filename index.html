@@ -651,27 +651,27 @@ dialog::backdrop {
   margin: 8px auto 0;
 }
 .dlg .hd {
-  padding: 12px 18px 10px;
+  padding: 8px 14px 6px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--line-subtle);
 }
 .dlg .hd b {
-  font-size: 19px;
+  font-size: 16.5px;
   font-weight: 750;
   color: var(--ink);
 }
 .dlg .bd2 {
-  padding: 14px 18px;
+  padding: 10px 14px;
   overflow-y: auto;
   flex: 1;
   -webkit-overflow-scrolling: touch;
 }
 .dlg .ft {
-  padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+  padding: 8px 14px calc(8px + env(safe-area-inset-bottom));
   display: grid;
-  gap: 8px;
+  gap: 6px;
   background: #ffffff;
   border-top: 1.5px solid var(--line);
 }
@@ -679,9 +679,9 @@ dialog::backdrop {
   border: 0;
   background: #efe6dc;
   border-radius: 50%;
-  width: 34px;
-  height: 34px;
-  font-size: 20px;
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
   line-height: 1;
   display: flex;
   align-items: center;
@@ -693,36 +693,36 @@ dialog::backdrop {
 .cl {
   background: var(--cream);
   border: 1.5px solid var(--line);
-  border-radius: 14px;
-  padding: 10px 12px;
-  margin-bottom: 9px;
+  border-radius: 12px;
+  padding: 7px 10px;
+  margin-bottom: 7px;
 }
 .cl .t {
   display: flex;
   justify-content: space-between;
   gap: 8px;
   font-weight: 650;
-  font-size: 15px;
+  font-size: 14px;
 }
 .cl .c {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 8px;
-  gap: 8px;
+  margin-top: 5px;
+  gap: 6px;
 }
 .q {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 .q button {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   border: 1.5px solid var(--line);
   background: #fff;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--maroon);
   display: flex;
@@ -731,42 +731,43 @@ dialog::backdrop {
 }
 .q button:active { background: var(--cream); }
 .q input {
-  width: 64px;
-  height: 38px;
+  width: 58px;
+  height: 32px;
   text-align: center;
   font-weight: 700;
+  font-size: 13.5px;
   border: 1.5px solid var(--line);
-  border-radius: 10px;
+  border-radius: 8px;
   background: #fff;
 }
 .tot {
   display: flex;
   justify-content: space-between;
-  padding: 4px 0;
-  font-size: 15px;
+  padding: 2px 0;
+  font-size: 13.5px;
 }
 .tot.big {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 850;
   color: var(--maroon);
   border-top: 1.5px dashed var(--line);
-  padding-top: 8px;
-  margin-top: 4px;
+  padding-top: 5px;
+  margin-top: 2px;
 }
 
 /* QUICK CASH BUTTONS */
 .quick {
   display: flex;
-  gap: 6px;
+  gap: 5px;
   flex-wrap: wrap;
-  margin-top: 8px;
+  margin-top: 5px;
 }
 .quick button {
   border: 1.5px solid var(--line);
   background: #fff;
-  border-radius: 10px;
-  padding: 7px 12px;
-  font-size: 14px;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--ink);
   transition: all 0.15s;
@@ -781,12 +782,13 @@ dialog::backdrop {
 .change-box {
   background: var(--cream);
   border: 1.5px solid var(--line);
-  border-radius: 12px;
-  padding: 10px 14px;
-  margin-top: 10px;
+  border-radius: 10px;
+  padding: 6px 12px;
+  margin-top: 6px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  font-size: 13.5px;
 }
 .change-box.ok {
   background: var(--ok-bg);
@@ -797,7 +799,7 @@ dialog::backdrop {
   border-color: #fca5a5;
 }
 .change-box b {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 800;
 }
 
@@ -805,31 +807,31 @@ dialog::backdrop {
 .kitchen-note-sec {
   background: var(--gold-bg);
   border: 1.5px solid #f0d5a3;
-  border-radius: 14px;
-  padding: 12px 14px;
-  margin: 14px 0 8px;
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin: 8px 0 4px;
 }
 .kitchen-note-sec .kn-hd {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
   color: #724b07;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 .kitchen-chips {
   display: flex;
-  gap: 6px;
+  gap: 5px;
   flex-wrap: wrap;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 .k-chip {
   border: 1px solid #dfc28d;
   background: #fff;
-  border-radius: 8px;
-  padding: 5px 10px;
-  font-size: 12.5px;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
   font-weight: 600;
   color: #5d3d04;
 }
@@ -1030,11 +1032,12 @@ dialog::backdrop {
   .rl {
     font-family: ui-monospace, Menlo, Consolas, monospace;
     white-space: pre;
-    line-height: 1.25;
+    line-height: 1.16;
+    font-size: 0.94em;
   }
   .rl.c { text-align: center; }
   .rl.bold { font-weight: 700; }
-  .rl.title { font-weight: 800; font-size: 1.6em; line-height: 1.15; }
+  .rl.title { font-weight: 800; font-size: 1.15em; line-height: 1.15; }
   @page { margin: 0; }
 }
 </style>
@@ -1216,12 +1219,12 @@ dialog::backdrop {
     </div>
 
     <div class="sec">
-      <h3>Backup (Data Mehfooz Rakhein)</h3>
-      <div class="hint" style="margin:0 0 12px">Data Cloud par bhi save hai aur phone mein bhi. Roz dukaan band karte waqt file backup bhi le sakte hain.</div>
+      <h3>Backup & Excel Report</h3>
+      <div class="hint" style="margin:0 0 12px">Data Cloud par automatically mehfooz hai. Excel me hisaab dekhne k liye "📊 Excel / CSV Report" dabayein.</div>
       <div class="row" style="flex-wrap:wrap">
-        <button class="btn" id="bkExport">Backup bhejein</button>
-        <button class="btn alt" id="bkImport">Backup wapas lein</button>
-        <button class="btn gray" id="csvExport">Sales CSV</button>
+        <button class="btn gold" id="csvExport" style="font-weight:700">📊 Excel / CSV Report</button>
+        <button class="btn" id="bkExport">💾 System Backup (.json)</button>
+        <button class="btn alt" id="bkImport">Restore (.json)</button>
       </div>
       <input type="file" id="bkFile" accept="application/json,.json" hidden>
     </div>
@@ -1960,8 +1963,15 @@ function customerReceiptModel(s) {
   add('-'.repeat(W));
 
   s.lines.forEach(l => {
-    wrap(l.name, W).forEach(x => add(x));
-    add(row('  ' + qtyFmt(l.qty) + ' ' + (l.unit === 'kg' ? 'kg' : 'pc') + ' x ' + num(l.price), num(l.total)));
+    const qStr = qtyFmt(l.qty) + (l.unit === 'kg' ? 'kg' : 'pc');
+    const left = qStr + ' ' + l.name;
+    const right = num(l.total);
+    if ((left.length + right.length + 1) <= W) {
+      add(row(left, right));
+    } else {
+      wrap(l.name, W).forEach(x => add(x));
+      add(row('  ' + qStr + ' x ' + num(l.price), right));
+    }
   });
   add('-'.repeat(W));
   if (s.disc > 0) {
@@ -2033,7 +2043,7 @@ function escposSingle(model) {
     b.push(
       0x1B, 0x61, l.align === 'c' ? 1 : 0,
       0x1B, 0x45, l.st ? 1 : 0,
-      0x1D, 0x21, l.st === 'title' ? 0x11 : 0
+      0x1D, 0x21, l.st === 'title' ? 0x01 : 0 // Compact double-height title for fast print
     );
     for (const ch of l.text) {
       const c = ch.charCodeAt(0);
@@ -2041,7 +2051,7 @@ function escposSingle(model) {
     }
     b.push(0x0A);
   }
-  b.push(0x1B, 0x45, 0, 0x1D, 0x21, 0, 0x1B, 0x61, 0, 0x1B, 0x64, 4, 0x1D, 0x56, 0x42, 0x00);
+  b.push(0x1B, 0x45, 0, 0x1D, 0x21, 0, 0x1B, 0x61, 0, 0x1B, 0x64, 2, 0x1D, 0x56, 0x42, 0x00);
   return b;
 }
 
@@ -2049,7 +2059,7 @@ function escpos(s, target = 'customer') {
   if (target === 'both') {
     const kBytes = escposSingle(kitchenReceiptModel(s));
     const cBytes = escposSingle(customerReceiptModel(s));
-    return [...kBytes, 0x1B, 0x64, 3, ...cBytes];
+    return [...kBytes, 0x1B, 0x64, 2, ...cBytes];
   }
   const model = target === 'kitchen' ? kitchenReceiptModel(s) : customerReceiptModel(s);
   return escposSingle(model);
@@ -2390,16 +2400,8 @@ async function markBackup() {
 function hideBanner() { $('#banner').hidden = true; }
 
 async function checkBackup() {
-  const c = (await kvGet('counter')) || 0;
-  const old = Date.now() - (S.settings.lastBackup || 0) > 24 * 3600 * 1000;
   const b = $('#banner');
-  if (c > 0 && old) {
-    b.hidden = false;
-    b.innerHTML = 'Backup nahi liya (24 ghante se zyada). <b style="text-decoration:underline;cursor:pointer" id="bnGo">Abhi backup lein</b>';
-    $('#bnGo').onclick = () => exportBackup();
-  } else {
-    b.hidden = true;
-  }
+  if (b) b.hidden = true;
 }
 
 async function shareOrDownload(file) {

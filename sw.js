@@ -1,5 +1,5 @@
-// Al Jannat POS - offline cache v4 with 0ms fast billing & global settings sync
-const CACHE = 'aljannat-pos-v4';
+// Al Jannat POS - offline cache v5 with compact fast billing
+const CACHE = 'aljannat-pos-v5';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
