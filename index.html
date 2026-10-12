@@ -1144,7 +1144,15 @@ dialog::backdrop {
 
   <!-- 4. SETTINGS VIEW -->
   <section id="v-set" hidden>
-    <h2>Settings</h2>
+    <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h2 style="margin:0">Settings</h2>
+      <button class="btn gold" id="btnSaveAllSettingsTop" style="padding:9px 15px;font-weight:700;font-size:14px">
+        💾 Save Settings
+      </button>
+    </div>
+    <button class="btn wide" id="btnSaveAllSettings" style="background:var(--maroon);margin-bottom:14px;padding:13px;font-size:15.5px;font-weight:700;box-shadow:var(--shadow-sm)">
+      💾 Settings Save Karein (Sabhi Mobiles Par Apply Hoga)
+    </button>
 
     <div class="sec">
       <h3>Online Cloud Database (Sab Mobiles Synchronized)</h3>
@@ -1218,7 +1226,11 @@ dialog::backdrop {
       <input type="file" id="bkFile" accept="application/json,.json" hidden>
     </div>
 
-    <div class="hint" style="text-align:center;margin:12px 0 24px">Al Jannat POS · Cloud Sync v3.0 · <span id="ver">v3.0</span></div>
+    <button class="btn wide" id="btnSaveAllSettingsBottom" style="background:var(--maroon);margin:10px 0 16px;padding:13px;font-size:15.5px;font-weight:750;box-shadow:var(--shadow-sm)">
+      💾 Settings Save Karein (Globally Apply)
+    </button>
+
+    <div class="hint" style="text-align:center;margin:8px 0 24px">Al Jannat POS · Cloud Sync v3.0 · <span id="ver">v3.0</span></div>
   </section>
 </main>
 
@@ -1441,6 +1453,10 @@ function setupRealtimeListeners() {
     snapshot.forEach(doc => {
       const sale = doc.data();
       totalToday += (sale.total || 0);
+      if (sale.no && sale.no > (S.counter || 0)) {
+        S.counter = sale.no;
+        kvSet('counter', S.counter).catch(() => {});
+      }
       salePut(sale).catch(() => {});
     });
     $('#todayTotal').textContent = rs(totalToday);
@@ -1461,7 +1477,7 @@ function setupRealtimeListeners() {
     }
   }, () => {});
 
-  // 3. Listen for Settings & Shop PIN changes across devices
+  // 3. Listen for Settings & Shop PIN changes across devices (Global Sync)
   fsDb.collection('meta').doc('settings').onSnapshot(doc => {
     if (doc.exists) {
       const cloudSettings = doc.data();
@@ -1469,6 +1485,17 @@ function setupRealtimeListeners() {
       kvSet('settings', S.settings).catch(() => {});
       renderShell();
       if (S.view === 'set') renderSettings();
+    }
+  }, () => {});
+
+  // 4. Listen for Sequential Bill Counter across devices
+  fsDb.collection('meta').doc('counter').onSnapshot(doc => {
+    if (doc.exists) {
+      const cloudCounter = Number(doc.data().value) || 0;
+      if (cloudCounter > (S.counter || 0)) {
+        S.counter = cloudCounter;
+        kvSet('counter', cloudCounter).catch(() => {});
+      }
     }
   }, () => {});
 }
@@ -1558,6 +1585,7 @@ const DEFAULT_SETTINGS = {
 const S = {
   items: [],
   settings: {},
+  counter: 0,
   cart: [],
   cat: 'All',
   q: '',
@@ -1645,6 +1673,7 @@ async function init() {
   if (!items) { items = DEFAULT_ITEMS; await kvSet('items', items); }
   S.items = items;
   S.settings = Object.assign({}, DEFAULT_SETTINGS, (await kvGet('settings')) || {});
+  S.counter = (await kvGet('counter')) || 0;
 
   try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {}
   $('#ver').textContent = VERSION;
@@ -1827,7 +1856,7 @@ function cartQtyChange(e) {
   updateBadges();
 }
 
-/* ============ SAVE SALE WITH CLOUD SYNC ============ */
+/* ============ SAVE SALE (INSTANT 0MS LOCAL + BACKGROUND CLOUD SYNC) ============ */
 async function saveSale(printTarget) {
   if (!S.cart.length) { toast('Cart khali hai'); return; }
   const t = total();
@@ -1835,25 +1864,10 @@ async function saveSale(printTarget) {
   const rec = rawRecv === '' ? t : Number(rawRecv);
   if (!(rec >= t)) { toast('Customer ke diye paise bill se kam hain'); return; }
 
-  // Sequential atomic bill counter across devices
-  let counter = 1;
-  try {
-    if (fsDb && navigator.onLine) {
-      const counterRef = fsDb.collection('meta').doc('counter');
-      counter = await fsDb.runTransaction(async tr => {
-        const cDoc = await tr.get(counterRef);
-        const current = cDoc.exists ? (cDoc.data().value || 0) : ((await kvGet('counter')) || 0);
-        const next = current + 1;
-        tr.set(counterRef, { value: next }, { merge: true });
-        return next;
-      });
-    } else {
-      counter = ((await kvGet('counter')) || 0) + 1;
-    }
-  } catch (e) {
-    counter = ((await kvGet('counter')) || 0) + 1;
-  }
-  await kvSet('counter', counter);
+  // 1. Instant sequential counter increment (0ms latency)
+  S.counter = (Number(S.counter) || 0) + 1;
+  const counter = S.counter;
+  kvSet('counter', counter).catch(() => {});
 
   const now = new Date();
   const note = $('#kNote').value.trim();
@@ -1871,16 +1885,10 @@ async function saveSale(printTarget) {
     change: rec - t
   };
 
-  // 1. Local Cache
-  await salePut(sale);
+  // 2. Immediate Local Storage Save
+  salePut(sale).catch(err => console.warn('Local save error:', err));
 
-  // 2. Cloud Firestore Real-time Broadcast
-  if (fsDb) {
-    fsDb.collection('sales').doc(String(sale.no)).set(sale).catch(err => {
-      console.warn('Saved offline in device cache:', err);
-    });
-  }
-
+  // 3. Clear UI & Close dialog immediately (0ms wait for cashier)
   S.cart = [];
   $('#disc').value = '';
   $('#recv').value = '';
@@ -1888,12 +1896,24 @@ async function saveSale(printTarget) {
   $('#cartDlg').close();
   updateBadges();
   renderCartBar();
-  await refreshToday();
-  await checkBackup();
+  refreshToday().catch(() => {});
+  checkBackup().catch(() => {});
 
   toast('Bill ' + billLabel(sale.no) + ' save ho gaya');
+
+  // 4. Instant Print (triggers RawBT / Bluetooth / Browser immediately)
   if (printTarget) {
-    await printSale(sale, printTarget);
+    printSale(sale, printTarget).catch(err => {
+      console.warn('Print error:', err);
+    });
+  }
+
+  // 5. Asynchronous Background Cloud Sync (Non-blocking)
+  if (fsDb) {
+    fsDb.collection('sales').doc(String(sale.no)).set(sale).catch(err => {
+      console.warn('Background sale sync queued/saved in cache:', err);
+    });
+    fsDb.collection('meta').doc('counter').set({ value: counter }, { merge: true }).catch(() => {});
   }
 }
 
@@ -2266,6 +2286,24 @@ const HINTS = {
   browser: 'Phone ka apna print dialog khulta hai. WiFi/USB printer ya PDF ke liye.'
 };
 
+function sanitizeSettings(obj) {
+  const allowed = ['shop', 'pin', 'addr', 'phone', 'footer', 'kotTitle', 'paper', 'printer', 'lastBackup'];
+  const clean = {};
+  for (const k of allowed) {
+    if (obj[k] !== undefined && obj[k] !== null) {
+      if (k === 'lastBackup') {
+        clean[k] = Number(obj[k]) || 0;
+      } else {
+        clean[k] = String(obj[k]);
+      }
+    }
+  }
+  if (!clean.shop || !clean.shop.trim()) {
+    clean.shop = 'Al Jannat Sweets & Bakers';
+  }
+  return clean;
+}
+
 function renderSettings() {
   $$('[data-k]').forEach(el => el.value = S.settings[el.dataset.k] ?? '');
   $('#printerHint').textContent = HINTS[S.settings.printer] || '';
@@ -2274,11 +2312,51 @@ function renderSettings() {
   $('#fbKeyInput').value = localStorage.getItem('aljannat_fb_key') || '';
 }
 
+async function saveAllSettings() {
+  $$('[data-k]').forEach(el => {
+    S.settings[el.dataset.k] = el.value.trim();
+  });
+
+  const pinVal = $('#setPin').value.trim();
+  if (pinVal) {
+    if (pinVal.length === 4 && /^\d{4}$/.test(pinVal)) {
+      S.settings.pin = pinVal;
+    } else {
+      toast('PIN sirf 4 digits (0-9) ka hona chahiye');
+      return;
+    }
+  }
+
+  if (!S.settings.shop) S.settings.shop = 'Al Jannat Sweets & Bakers';
+
+  // 1. Local Persistence
+  await kvSet('settings', S.settings);
+
+  // 2. Global Cloud Sync across all mobile devices
+  if (fsDb) {
+    const cleanDoc = sanitizeSettings(S.settings);
+    fsDb.collection('meta').doc('settings').set(cleanDoc, { merge: true })
+      .then(() => {
+        toast('Settings save ho gayin aur sabhi mobiles par apply ho gayin! 🌐');
+      })
+      .catch(err => {
+        console.warn('Settings cloud sync notice:', err);
+        toast('Settings phone par save ho gayin (Cloud pending)');
+      });
+  } else {
+    toast('Settings save ho gayin (Offline)');
+  }
+
+  renderShell();
+  renderSettings();
+}
+
 async function setSetting(k, v) {
   S.settings[k] = v;
   await kvSet('settings', S.settings);
   if (fsDb) {
-    fsDb.collection('meta').doc('settings').set(S.settings, { merge: true }).catch(() => {});
+    const cleanDoc = sanitizeSettings(S.settings);
+    fsDb.collection('meta').doc('settings').set(cleanDoc, { merge: true }).catch(() => {});
   }
   if (k === 'shop') renderShell();
   if (k === 'printer') renderSettings();
@@ -2570,6 +2648,12 @@ function bind() {
   $('#itemDel').onclick = delItem;
 
   // Settings
+  const btnSaveTop = $('#btnSaveAllSettingsTop');
+  if (btnSaveTop) btnSaveTop.onclick = saveAllSettings;
+  const btnSaveMid = $('#btnSaveAllSettings');
+  if (btnSaveMid) btnSaveMid.onclick = saveAllSettings;
+  const btnSaveBtm = $('#btnSaveAllSettingsBottom');
+  if (btnSaveBtm) btnSaveBtm.onclick = saveAllSettings;
   $$('[data-k]').forEach(el => el.onchange = () => setSetting(el.dataset.k, el.value));
   $('#btConnect').onclick = async () => {
     try {

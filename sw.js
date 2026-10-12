@@ -1,5 +1,5 @@
-// Al Jannat POS - offline cache v3 with Firebase Cloud Sync.
-const CACHE = 'aljannat-pos-v3';
+// Al Jannat POS - offline cache v4 with 0ms fast billing & global settings sync
+const CACHE = 'aljannat-pos-v4';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
