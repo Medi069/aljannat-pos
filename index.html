@@ -3,143 +3,972 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#7a1f2b">
+<meta name="theme-color" content="#7a1a28">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Al Jannat POS</title>
 <style>
-:root{
-  --maroon:#7a1f2b; --maroon-d:#5c1620; --gold:#c8963e; --cream:#fff8ee; --ink:#241a17;
-  --mute:#7b6d66; --line:#eadfce; --card:#ffffff; --ok:#1f7a4d; --bad:#b3261e;
-  --nav:58px;
+:root {
+  --maroon: #7a1a28;
+  --maroon-d: #54111a;
+  --maroon-l: #962534;
+  --maroon-bg: #fcf4f5;
+  --gold: #c59235;
+  --gold-d: #a27220;
+  --gold-l: #faedd6;
+  --gold-bg: #fffbf4;
+  --cream: #faf5ed;
+  --card: #ffffff;
+  --ink: #1f1613;
+  --mute: #786962;
+  --line: #e6ded3;
+  --line-subtle: #f0eae1;
+  --ok: #157945;
+  --ok-bg: #eaf6ef;
+  --bad: #ba2323;
+  --bad-bg: #fdeeee;
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 20px;
+  --nav: 62px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow: 0 4px 14px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 28px rgba(0,0,0,0.18);
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-[hidden]{display:none!important}
-button{font:inherit;color:inherit;cursor:pointer}
-input,select{font:inherit;color:inherit}
-header{position:sticky;top:0;z-index:5;background:var(--maroon);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-header b{display:block;font-size:17px;letter-spacing:.2px}
-header small{opacity:.85;font-size:12.5px}
-header .today{text-align:right;font-size:12px;opacity:.9}
-header .today strong{display:block;font-size:17px}
-main{padding:12px 12px calc(var(--nav) + 90px + env(safe-area-inset-bottom));max-width:720px;margin:0 auto}
-#banner{background:#fff1d6;border:1px solid #f0cf86;color:#6b4a00;padding:10px 12px;border-radius:12px;margin:10px 12px 0;font-size:14px;max-width:696px}
-.search{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-size:16px}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 6px;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chip{flex:0 0 auto;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-size:14.5px}
-.chip.on{background:var(--maroon);border-color:var(--maroon);color:#fff}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:6px}
-@media(min-width:520px){.grid{grid-template-columns:repeat(3,1fr)}}
-.card{position:relative;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px 10px;min-height:84px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px}
-.card:active{transform:scale(.97);background:#fff3dc}
-.card .n{font-weight:600;font-size:15.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.card .p{color:var(--maroon);font-weight:700;font-size:14.5px}
-.card .p i{font-style:normal;color:var(--mute);font-weight:500;font-size:12.5px}
-.bd{position:absolute;top:-7px;right:-5px;min-width:24px;height:24px;border-radius:12px;background:var(--gold);color:#241a17;font-weight:700;font-size:12.5px;display:none;align-items:center;justify-content:center;padding:0 6px;box-shadow:0 1px 3px rgba(0,0,0,.25)}
-.bd.on{display:flex}
-.empty{color:var(--mute);text-align:center;padding:28px 10px}
-#cartbar{position:fixed;left:0;right:0;bottom:calc(var(--nav) + env(safe-area-inset-bottom));padding:8px 12px;z-index:6}
-#cartbar button{width:100%;max-width:696px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--maroon);color:#fff;border:0;border-radius:14px;padding:14px 16px;box-shadow:0 4px 14px rgba(0,0,0,.28);font-size:16px}
-#cartbar b{font-size:18px}
-nav{position:fixed;left:0;right:0;bottom:0;z-index:7;height:calc(var(--nav) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr)}
-nav button{border:0;background:none;font-size:12.5px;color:var(--mute);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-nav button.on{color:var(--maroon);font-weight:700}
-h2{font-size:18px;margin:6px 0 10px}
-.row{display:flex;gap:8px;align-items:center}
-.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:600;background:var(--maroon);color:#fff}
-.btn.alt{background:#fff;color:var(--maroon);border:1.5px solid var(--maroon)}
-.btn.gray{background:#efe6d8;color:var(--ink)}
-.btn.red{background:var(--bad)}
-.btn.wide{width:100%}
-.btn:active{filter:brightness(.92)}
-.list .it{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;width:100%;text-align:left}
-.it .l{min-width:0}.it .l b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.it .l small{color:var(--mute)}
-.it .r{font-weight:700;white-space:nowrap;color:var(--maroon)}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px}
-.stat{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px}
-.stat small{color:var(--mute);display:block}.stat b{font-size:20px;color:var(--maroon)}
-label{display:block;font-size:13px;color:var(--mute);margin:12px 0 4px}
-.f{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
-.hint{font-size:13px;color:var(--mute);margin-top:6px}
-.sec{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:12px}
-.sec h3{margin:0 0 4px;font-size:15.5px}
-dialog{border:0;padding:0;width:100%;max-width:560px;margin:auto auto 0;border-radius:18px 18px 0 0;max-height:94vh;background:var(--cream);color:var(--ink);overflow:hidden}
-dialog::backdrop{background:rgba(0,0,0,.5)}
-.dlg{display:flex;flex-direction:column;max-height:94vh}
-.dlg .hd{padding:14px 16px 8px;display:flex;justify-content:space-between;align-items:center}
-.dlg .hd b{font-size:18px}
-.dlg .bd2{padding:0 16px;overflow:auto;flex:1}
-.dlg .ft{padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:grid;gap:8px;background:var(--cream);border-top:1px solid var(--line)}
-.x{border:0;background:#efe6d8;border-radius:50%;width:36px;height:36px;font-size:20px;line-height:1}
-.cl{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px}
-.cl .t{display:flex;justify-content:space-between;gap:8px;font-weight:600}
-.cl .c{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:8px}
-.q{display:flex;align-items:center;gap:6px}
-.q button{width:40px;height:40px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:20px}
-.q input{width:68px;text-align:center;padding:9px 4px;border:1.5px solid var(--line);border-radius:10px}
-.tot{display:flex;justify-content:space-between;padding:4px 0}
-.tot.big{font-size:22px;font-weight:800;color:var(--maroon)}
-.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.quick button{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px}
-#toast{position:fixed;left:50%;bottom:calc(var(--nav) + 80px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#241a17;color:#fff;padding:10px 16px;border-radius:12px;z-index:50;font-size:14.5px;max-width:90%;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
-#toast.on{opacity:1}
-.mono{font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre;font-size:13px;background:#fff;border:1.5px dashed var(--line);border-radius:10px;padding:10px;overflow:auto}
-#rcpt{display:none}
-@media print{
-  html,body{background:#fff}
-  body>*:not(#rcpt){display:none!important}
-  #rcpt{display:block;margin:0;padding:0 1mm;box-sizing:border-box;color:#000}
-  #rcpt .rl{font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre;line-height:1.25}
-  #rcpt .rl.c{text-align:center}
-  #rcpt .rl.bold{font-weight:700}
-  #rcpt .rl.title{font-weight:700;font-size:1.9em;line-height:1.15}
-  @page{margin:0}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font: 15.5px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; cursor: pointer; border: none; outline: none; }
+input, select { font: inherit; color: inherit; }
+
+/* HEADER */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-d) 100%);
+  color: #fff;
+  padding: calc(10px + env(safe-area-inset-top)) 16px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+}
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.22);
+}
+.header-logo svg {
+  width: 22px;
+  height: 22px;
+  fill: #fff;
+}
+.header-title b {
+  display: block;
+  font-size: 17.5px;
+  letter-spacing: 0.2px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.header-title .tag-offline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  color: #d1fae5;
+  opacity: 0.95;
+  font-weight: 500;
+}
+.header-title .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #34d399;
+  display: inline-block;
+}
+.header-sale {
+  text-align: right;
+  background: rgba(0,0,0,0.2);
+  padding: 6px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.header-sale span {
+  display: block;
+  font-size: 11px;
+  opacity: 0.85;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.header-sale strong {
+  display: block;
+  font-size: 16.5px;
+  font-weight: 800;
+  color: #fff;
+}
+
+/* MAIN LAYOUT */
+main {
+  padding: 12px 12px calc(var(--nav) + 85px + env(safe-area-inset-bottom));
+  max-width: 740px;
+  margin: 0 auto;
+}
+
+/* BANNER */
+#banner {
+  background: #fff8e6;
+  border: 1.5px solid #f6d288;
+  color: #7c4a00;
+  padding: 12px 14px;
+  border-radius: 14px;
+  margin: 10px 12px 0;
+  font-size: 14px;
+  max-width: 716px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* SEARCH */
+.search-box {
+  position: relative;
+  margin-bottom: 8px;
+}
+.search-box svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 19px;
+  height: 19px;
+  stroke: var(--mute);
+  fill: none;
+  stroke-width: 2;
+  pointer-events: none;
+}
+.search {
+  width: 100%;
+  padding: 12px 40px 12px 42px;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  font-size: 15.5px;
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.search:focus {
+  outline: none;
+  border-color: var(--maroon);
+  box-shadow: 0 0 0 3px rgba(122,26,40,0.12);
+}
+.search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #efe6dc;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--mute);
+}
+.search-clear.on { display: flex; }
+
+/* CHIPS */
+.chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0 10px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: 0 0 auto;
+  border: 1.5px solid var(--line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 7px 15px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-sm);
+}
+.chip.on {
+  background: var(--maroon);
+  border-color: var(--maroon);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(122,26,40,0.25);
+}
+
+/* GRID & CARDS */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 4px;
+}
+@media (min-width: 540px) {
+  .grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+}
+.card {
+  position: relative;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 12px 11px;
+  min-height: 90px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  transition: transform 0.08s ease, border-color 0.15s, background-color 0.15s;
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+}
+.card:active {
+  transform: scale(0.96);
+  background: var(--gold-bg);
+  border-color: var(--gold);
+}
+.card .n {
+  font-weight: 650;
+  font-size: 15px;
+  color: var(--ink);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card .p {
+  color: var(--maroon);
+  font-weight: 750;
+  font-size: 14.5px;
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+.card .p i {
+  font-style: normal;
+  color: var(--mute);
+  font-weight: 500;
+  font-size: 12px;
+}
+.bd {
+  position: absolute;
+  top: -7px;
+  right: -5px;
+  min-width: 25px;
+  height: 25px;
+  border-radius: 13px;
+  background: var(--maroon);
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  box-shadow: 0 2px 7px rgba(122,26,40,0.35);
+  border: 2px solid #fff;
+}
+.bd.on { display: flex; }
+.empty {
+  color: var(--mute);
+  text-align: center;
+  padding: 36px 12px;
+  font-size: 15px;
+}
+
+/* FLOATING CART BAR */
+#cartbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--nav) + env(safe-area-inset-bottom));
+  padding: 8px 12px;
+  z-index: 15;
+  pointer-events: none;
+}
+#cartbar button {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 716px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-d) 100%);
+  color: #fff;
+  border-radius: 16px;
+  padding: 13px 18px;
+  box-shadow: var(--shadow-lg);
+  font-size: 16px;
+  transition: transform 0.1s ease;
+}
+#cartbar button:active {
+  transform: scale(0.98);
+}
+.cb-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cb-count {
+  background: rgba(255,255,255,0.22);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.cb-total {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+.cb-action {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  font-size: 15px;
+  background: var(--gold);
+  color: #1f1613;
+  padding: 6px 14px;
+  border-radius: 12px;
+}
+
+/* NAVIGATION */
+nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 25;
+  height: calc(var(--nav) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: #ffffff;
+  border-top: 1.5px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.04);
+}
+nav button {
+  background: none;
+  font-size: 12px;
+  color: var(--mute);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+nav button svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+nav button.on {
+  color: var(--maroon);
+  font-weight: 700;
+}
+
+/* HEADINGS & BUTTONS */
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 10px 0 12px;
+  color: var(--ink);
+}
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.btn {
+  border-radius: 13px;
+  padding: 12px 16px;
+  font-weight: 650;
+  background: var(--maroon);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 15px;
+  transition: filter 0.15s, transform 0.08s;
+  text-align: center;
+}
+.btn:active {
+  filter: brightness(0.92);
+  transform: scale(0.98);
+}
+.btn.wide { width: 100%; }
+.btn.alt {
+  background: #fff;
+  color: var(--maroon);
+  border: 1.5px solid var(--maroon);
+}
+.btn.gold {
+  background: var(--gold);
+  color: #1f1613;
+}
+.btn.gray {
+  background: #eee5d8;
+  color: var(--ink);
+}
+.btn.red {
+  background: var(--bad);
+  color: #fff;
+}
+.btn-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* LISTS & STATS */
+.list .it {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  width: 100%;
+  text-align: left;
+  transition: background-color 0.12s;
+  box-shadow: var(--shadow-sm);
+}
+.list .it:active {
+  background: var(--gold-bg);
+}
+.it .l {
+  min-width: 0;
+  flex: 1;
+}
+.it .l b {
+  display: block;
+  font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.it .l small {
+  color: var(--mute);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+.it .tag {
+  background: var(--gold-l);
+  color: #684507;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  display: inline-block;
+}
+.it .r {
+  font-weight: 750;
+  white-space: nowrap;
+  color: var(--maroon);
+  font-size: 15.5px;
+}
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 8px 0 14px;
+}
+.stat {
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow-sm);
+}
+.stat small {
+  color: var(--mute);
+  display: block;
+  font-size: 13px;
+}
+.stat b {
+  font-size: 21px;
+  color: var(--maroon);
+  font-weight: 800;
+  display: block;
+  margin-top: 2px;
+}
+
+/* FORMS & SECTIONS */
+label {
+  display: block;
+  font-size: 13.5px;
+  color: var(--mute);
+  font-weight: 500;
+  margin: 12px 0 5px;
+}
+.f {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  font-size: 15px;
+  color: var(--ink);
+  transition: border-color 0.15s;
+}
+.f:focus {
+  outline: none;
+  border-color: var(--maroon);
+}
+.hint {
+  font-size: 13px;
+  color: var(--mute);
+  margin-top: 6px;
+  line-height: 1.35;
+}
+.sec {
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+}
+.sec h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* DIALOGS */
+dialog {
+  border: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 580px;
+  margin: auto auto 0;
+  border-radius: 20px 20px 0 0;
+  max-height: 94vh;
+  background: #fff;
+  color: var(--ink);
+  overflow: hidden;
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.22);
+}
+@media (min-width: 600px) {
+  dialog {
+    margin: auto;
+    border-radius: 20px;
+    max-height: 90vh;
+  }
+}
+dialog::backdrop {
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(2px);
+}
+.dlg {
+  display: flex;
+  flex-direction: column;
+  max-height: 94vh;
+}
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: #ddd2c4;
+  margin: 8px auto 0;
+}
+.dlg .hd {
+  padding: 12px 18px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line-subtle);
+}
+.dlg .hd b {
+  font-size: 19px;
+  font-weight: 750;
+  color: var(--ink);
+}
+.dlg .bd2 {
+  padding: 14px 18px;
+  overflow-y: auto;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+}
+.dlg .ft {
+  padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+  display: grid;
+  gap: 8px;
+  background: #ffffff;
+  border-top: 1.5px solid var(--line);
+}
+.x {
+  border: 0;
+  background: #efe6dc;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mute);
+}
+
+/* CART ITEMS */
+.cl {
+  background: var(--cream);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin-bottom: 9px;
+}
+.cl .t {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-weight: 650;
+  font-size: 15px;
+}
+.cl .c {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  gap: 8px;
+}
+.q {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.q button {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1.5px solid var(--line);
+  background: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--maroon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.q button:active { background: var(--cream); }
+.q input {
+  width: 64px;
+  height: 38px;
+  text-align: center;
+  font-weight: 700;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+.tot {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 15px;
+}
+.tot.big {
+  font-size: 22px;
+  font-weight: 850;
+  color: var(--maroon);
+  border-top: 1.5px dashed var(--line);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+/* QUICK CASH BUTTONS */
+.quick {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.quick button {
+  border: 1.5px solid var(--line);
+  background: #fff;
+  border-radius: 10px;
+  padding: 7px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  transition: all 0.15s;
+}
+.quick button.active {
+  background: var(--maroon);
+  border-color: var(--maroon);
+  color: #fff;
+}
+
+/* CHANGE / WAPAS DEIN BOX */
+.change-box {
+  background: var(--cream);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.change-box.ok {
+  background: var(--ok-bg);
+  border-color: #a3e0be;
+}
+.change-box.bad {
+  background: var(--bad-bg);
+  border-color: #fca5a5;
+}
+.change-box b {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* KITCHEN NOTE BOX */
+.kitchen-note-sec {
+  background: var(--gold-bg);
+  border: 1.5px solid #f0d5a3;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 14px 0 8px;
+}
+.kitchen-note-sec .kn-hd {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #724b07;
+  margin-bottom: 6px;
+}
+.kitchen-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.k-chip {
+  border: 1px solid #dfc28d;
+  background: #fff;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #5d3d04;
+}
+.k-chip:active {
+  background: var(--gold);
+  color: #fff;
+}
+
+/* TAB SELECTORS (IN BILL PREVIEW) */
+.tab-pills {
+  display: flex;
+  gap: 6px;
+  background: #eee5d8;
+  padding: 4px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+.tab-pills button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 9px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--mute);
+  transition: all 0.15s;
+}
+.tab-pills button.on {
+  background: #fff;
+  color: var(--maroon);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* TOAST */
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--nav) + 85px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  background: #1f1613;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 14px;
+  z-index: 99;
+  font-size: 14.5px;
+  font-weight: 500;
+  max-width: 90%;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  box-shadow: var(--shadow-lg);
+}
+#toast.on {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
+}
+.mono {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  white-space: pre;
+  font-size: 13px;
+  background: #fff;
+  border: 1.5px dashed var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  overflow-x: auto;
+  line-height: 1.35;
+}
+
+/* PRINTING STYLES */
+#rcpt { display: none; }
+@media print {
+  html, body {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  body > *:not(#rcpt) { display: none !important; }
+  #rcpt {
+    display: block !important;
+    margin: 0;
+    padding: 0 1mm;
+    box-sizing: border-box;
+    color: #000;
+  }
+  .rcpt-ticket {
+    page-break-after: always;
+    break-after: page;
+    margin-bottom: 12mm;
+  }
+  .rcpt-ticket:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+  .rl {
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    white-space: pre;
+    line-height: 1.25;
+  }
+  .rl.c { text-align: center; }
+  .rl.bold { font-weight: 700; }
+  .rl.title { font-weight: 800; font-size: 1.6em; line-height: 1.15; }
+  @page { margin: 0; }
 }
 </style>
 </head>
 <body>
 
 <header>
-  <div><b id="shopName">Al Jannat</b><small>POS · offline chalta hai</small></div>
-  <div class="today"><span>Aaj ki sale</span><strong id="todayTotal">Rs. 0</strong></div>
+  <div class="header-brand">
+    <div class="header-logo">
+      <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9c0 3.8 2.4 7 5.8 8.3.4.1.8-.2.8-.6v-2.3c0-.4.3-.8.7-.9a6.5 6.5 0 1 1 5.4 0c.4.1.7.5.7.9v2.3c0 .4.4.7.8.6A9 9 0 0 0 12 3z"/></svg>
+    </div>
+    <div class="header-title">
+      <b id="shopName">Al Jannat</b>
+      <div class="tag-offline"><span class="dot"></span><span>Offline POS</span></div>
+    </div>
+  </div>
+  <div class="header-sale">
+    <span>Aaj ki sale</span>
+    <strong id="todayTotal">Rs. 0</strong>
+  </div>
 </header>
 <div id="banner" hidden></div>
 
 <main>
-  <!-- SALE -->
+  <!-- 1. SALE VIEW -->
   <section id="v-sale">
-    <input id="q" class="search" type="search" placeholder="Item dhoondein..." autocomplete="off">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input id="q" class="search" type="search" placeholder="Item dhoondein (jaise Gulab Jamun, Samosa)..." autocomplete="off">
+      <button class="search-clear" id="qClear">×</button>
+    </div>
     <div id="cats" class="chips"></div>
     <div id="grid" class="grid"></div>
   </section>
 
-  <!-- BILLS -->
+  <!-- 2. BILLS & REPORTS VIEW -->
   <section id="v-bills" hidden>
     <h2>Bills &amp; Hisaab</h2>
-    <div class="row"><input id="billDay" type="date" class="f"></div>
+    <div class="row">
+      <input id="billDay" type="date" class="f" style="flex:1">
+      <button class="btn alt" id="billTodayBtn" style="padding:10px 14px;white-space:nowrap">Aaj</button>
+      <button class="btn gray" id="billYestBtn" style="padding:10px 14px;white-space:nowrap">Kal</button>
+    </div>
     <div class="stats">
-      <div class="stat"><small>Bills</small><b id="stCount">0</b></div>
-      <div class="stat"><small>Total sale</small><b id="stTotal">Rs. 0</b></div>
+      <div class="stat"><small>Kul Bills</small><b id="stCount">0</b></div>
+      <div class="stat"><small>Kul Sale</small><b id="stTotal">Rs. 0</b></div>
     </div>
     <div id="topItems"></div>
-    <h2 style="margin-top:16px">Bills ki list</h2>
+    <h2 style="margin-top:20px">Bills ki list</h2>
     <div id="billList" class="list"></div>
   </section>
 
-  <!-- ITEMS -->
+  <!-- 3. ITEMS VIEW -->
   <section id="v-items" hidden>
-    <h2>Items &amp; Rates</h2>
-    <button class="btn wide" id="addItem">+ Naya item</button>
-    <div id="itemList" class="list" style="margin-top:12px"></div>
+    <div class="row" style="justify-content:space-between;margin-bottom:8px">
+      <h2 style="margin:0">Items &amp; Rates</h2>
+      <button class="btn" id="addItem" style="padding:8px 14px">+ Naya item</button>
+    </div>
+    <input id="itemSearch" class="search" type="search" placeholder="List mein dhoondein..." style="margin-bottom:10px">
+    <div id="itemList" class="list"></div>
   </section>
 
-  <!-- SETTINGS -->
+  <!-- 4. SETTINGS VIEW -->
   <section id="v-set" hidden>
     <h2>Settings</h2>
     <div class="sec">
@@ -150,24 +979,34 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
       <label>Receipt ke neeche message</label><input class="f" data-k="footer">
     </div>
     <div class="sec">
-      <h3>Receipt printer</h3>
+      <h3>Kitchen Slip Settings</h3>
+      <label>Kitchen Slip Header (Title)</label>
+      <input class="f" data-k="kotTitle" placeholder="KITCHEN ORDER / KOT">
+      <div class="hint">Kitchen slip par yeh header print hoga taake bawarchi khana / counter foran pehchan sake.</div>
+    </div>
+    <div class="sec">
+      <h3>Receipt Printer</h3>
       <label>Print ka tareeqa</label>
       <select class="f" data-k="printer" id="printerSel">
-        <option value="rawbt">RawBT app (zyada tar Bluetooth printers)</option>
+        <option value="rawbt">RawBT app (Bluetooth thermal printers)</option>
         <option value="ble">Seedha Bluetooth (BLE printers)</option>
-        <option value="browser">Browser print (WiFi/USB/PDF)</option>
+        <option value="browser">Browser print (WiFi / USB / PDF)</option>
       </select>
       <div class="hint" id="printerHint"></div>
       <label>Paper ki chaurai</label>
-      <select class="f" data-k="paper"><option value="58">58 mm (chhota roll)</option><option value="80">80 mm (bara roll)</option></select>
-      <div class="row" style="margin-top:12px;flex-wrap:wrap">
+      <select class="f" data-k="paper">
+        <option value="58">58 mm (chhota roll - aam Bluetooth printers)</option>
+        <option value="80">80 mm (bara roll - 3 inch)</option>
+      </select>
+      <div class="row" style="margin-top:14px;flex-wrap:wrap">
         <button class="btn alt" id="btConnect" hidden>Bluetooth printer jorein</button>
-        <button class="btn" id="testPrint">Test receipt</button>
+        <button class="btn" id="testPrintCustomer">Test Customer slip</button>
+        <button class="btn alt" id="testPrintKitchen">Test Kitchen slip</button>
       </div>
     </div>
     <div class="sec">
-      <h3>Backup (data mehfooz rakhein)</h3>
-      <div class="hint" style="margin:0 0 10px">Data isi phone mein hota hai. Roz dukaan band karte waqt backup bhej dein (WhatsApp / Drive).</div>
+      <h3>Backup (Data Mehfooz Rakhein)</h3>
+      <div class="hint" style="margin:0 0 12px">Data aapke isi phone mein mehfooz hota hai. Roz dukaan band karte waqt backup bhej dein (WhatsApp ya Google Drive par).</div>
       <div class="row" style="flex-wrap:wrap">
         <button class="btn" id="bkExport">Backup bhejein</button>
         <button class="btn alt" id="bkImport">Backup wapas lein</button>
@@ -175,24 +1014,45 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
       </div>
       <input type="file" id="bkFile" accept="application/json,.json" hidden>
     </div>
-    <div class="hint" style="text-align:center;margin:8px 0 20px">Al Jannat POS · offline · <span id="ver"></span></div>
+    <div class="hint" style="text-align:center;margin:12px 0 24px">Al Jannat POS · offline ready · <span id="ver">v2.0</span></div>
   </section>
 </main>
 
+<!-- FLOATING CART BUTTON -->
 <div id="cartbar" hidden>
-  <button id="openCart"><span id="cartCount">0 items</span><b id="cartTotal">Rs. 0</b><span>Bill banayein →</span></button>
+  <button id="openCart">
+    <div class="cb-left">
+      <span class="cb-count" id="cartCount">0 items</span>
+      <span class="cb-total" id="cartTotal">Rs. 0</span>
+    </div>
+    <span class="cb-action">Bill banayein →</span>
+  </button>
 </div>
 
+<!-- BOTTOM NAVIGATION -->
 <nav>
-  <button data-v="sale" class="on"><svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 7H6"/></svg>Sale</button>
-  <button data-v="bills"><svg viewBox="0 0 24 24"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6"/></svg>Bills</button>
-  <button data-v="items"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Items</button>
-  <button data-v="set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Settings</button>
+  <button data-v="sale" class="on">
+    <svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 7H6"/></svg>
+    <span>Sale</span>
+  </button>
+  <button data-v="bills">
+    <svg viewBox="0 0 24 24"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6"/></svg>
+    <span>Bills</span>
+  </button>
+  <button data-v="items">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    <span>Items</span>
+  </button>
+  <button data-v="set">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    <span>Settings</span>
+  </button>
 </nav>
 
-<!-- CART -->
+<!-- CART / BILL DIALOG -->
 <dialog id="cartDlg"><div class="dlg">
-  <div class="hd"><b>Bill</b><button class="x" data-close>×</button></div>
+  <div class="sheet-handle"></div>
+  <div class="hd"><b>Bill Banayein</b><button class="x" data-close>×</button></div>
   <div class="bd2">
     <div id="cartLines"></div>
     <label>Discount (Rs.)</label>
@@ -200,44 +1060,94 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
     <div style="margin-top:12px">
       <div class="tot"><span>Subtotal</span><span id="tSub">Rs. 0</span></div>
       <div class="tot"><span>Discount</span><span id="tDisc">Rs. 0</span></div>
-      <div class="tot big"><span>Total</span><span id="tTot">Rs. 0</span></div>
+      <div class="tot big"><span>Total Bill</span><span id="tTot">Rs. 0</span></div>
     </div>
+
+    <!-- PAYMENT -->
     <label>Customer ne diye (Rs.) — khali chorein to exact</label>
     <input id="recv" class="f" type="number" inputmode="decimal" min="0" placeholder="Exact">
     <div class="quick" id="quick"></div>
-    <div class="tot" style="margin-top:10px"><span>Wapas dein</span><b id="tChange">Rs. 0</b></div>
-    <div style="height:10px"></div>
+    <div class="change-box ok" id="changeBox">
+      <span>Wapas dein (Change):</span>
+      <b id="tChange">Rs. 0</b>
+    </div>
+
+    <!-- KITCHEN NOTE -->
+    <div class="kitchen-note-sec">
+      <div class="kn-hd">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        <span>Kitchen ke liye note (ikhtiyari)</span>
+      </div>
+      <div class="kitchen-chips" id="kChips">
+        <button type="button" class="k-chip" data-val="Parcel">Parcel</button>
+        <button type="button" class="k-chip" data-val="Dine-in">Dine-in</button>
+        <button type="button" class="k-chip" data-val="Table 1">Table 1</button>
+        <button type="button" class="k-chip" data-val="Table 2">Table 2</button>
+        <button type="button" class="k-chip" data-val="Table 3">Table 3</button>
+        <button type="button" class="k-chip" data-val="Packing">Packing</button>
+        <button type="button" class="k-chip" data-val="Urgent">Urgent</button>
+      </div>
+      <input id="kNote" class="f" placeholder="jaise Parcel / Table 3 / Garam garam..." style="background:#fff">
+    </div>
   </div>
+
   <div class="ft">
-    <button class="btn wide" id="savePrint">Bill save + Print</button>
-    <div class="row"><button class="btn gray" id="saveOnly" style="flex:1">Sirf save</button><button class="btn gray" id="clearCart" style="flex:1">Cart khali</button></div>
+    <!-- ACTION BUTTONS -->
+    <button class="btn wide" id="saveBoth" style="background:var(--maroon);box-shadow:var(--shadow-sm)">
+      Save + Kitchen + Customer slip
+    </button>
+    <div class="btn-grid-2">
+      <button class="btn alt" id="saveKitchen">Save + Kitchen slip</button>
+      <button class="btn alt" id="saveCustomer">Save + Customer slip</button>
+    </div>
+    <div class="btn-grid-2">
+      <button class="btn gray" id="saveOnly">Sirf save karein</button>
+      <button class="btn gray" id="clearCart">Cart khali</button>
+    </div>
   </div>
 </div></dialog>
 
-<!-- ITEM EDIT -->
+<!-- ITEM EDIT DIALOG -->
 <dialog id="itemDlg"><div class="dlg">
+  <div class="sheet-handle"></div>
   <div class="hd"><b id="itemTitle">Item</b><button class="x" data-close>×</button></div>
   <div class="bd2">
-    <label>Naam</label><input id="fName" class="f">
-    <label>Rate (Rs.)</label><input id="fPrice" class="f" type="number" inputmode="decimal" min="0">
+    <label>Item ka Naam</label><input id="fName" class="f" placeholder="jaise Gulab Jamun">
+    <label>Rate (Rs.)</label><input id="fPrice" class="f" type="number" inputmode="decimal" min="0" placeholder="1400">
     <label>Bikta hai</label>
-    <select id="fUnit" class="f"><option value="pc">Dana / piece</option><option value="kg">Kilo (kg)</option></select>
-    <label>Category</label><input id="fCat" class="f" list="catList"><datalist id="catList"></datalist>
+    <select id="fUnit" class="f">
+      <option value="pc">Dana / Piece (pc)</option>
+      <option value="kg">Kilo (kg)</option>
+    </select>
+    <label>Category</label>
+    <input id="fCat" class="f" list="catList" placeholder="jaise Mithai, Bakery, Namkeen...">
+    <datalist id="catList"></datalist>
     <div style="height:12px"></div>
   </div>
   <div class="ft">
-    <button class="btn wide" id="itemSave">Save</button>
-    <button class="btn red wide" id="itemDel" hidden>Delete item</button>
+    <button class="btn wide" id="itemSave">Save Item</button>
+    <button class="btn red wide" id="itemDel" hidden>Item Delete Karein</button>
   </div>
 </div></dialog>
 
-<!-- BILL DETAIL -->
+<!-- BILL DETAIL DIALOG -->
 <dialog id="billDlg"><div class="dlg">
-  <div class="hd"><b id="bdTitle">Bill</b><button class="x" data-close>×</button></div>
-  <div class="bd2"><div id="bdBody" class="mono"></div><div style="height:12px"></div></div>
+  <div class="sheet-handle"></div>
+  <div class="hd"><b id="bdTitle">Bill Tafseel</b><button class="x" data-close>×</button></div>
+  <div class="bd2">
+    <div class="tab-pills">
+      <button id="tabRcptCust" class="on">Customer Receipt</button>
+      <button id="tabRcptKitch">Kitchen Slip</button>
+    </div>
+    <div id="bdBody" class="mono"></div>
+  </div>
   <div class="ft">
-    <button class="btn wide" id="bdPrint">Dobara print</button>
-    <button class="btn red wide" id="bdDel">Bill delete</button>
+    <button class="btn wide" id="bdPrintBoth">Dono Slips Print Karein</button>
+    <div class="btn-grid-2">
+      <button class="btn alt" id="bdPrintCust">Customer Slip</button>
+      <button class="btn alt" id="bdPrintKitch">Kitchen Slip</button>
+    </div>
+    <button class="btn red wide" id="bdDel">Bill Delete Karein</button>
   </div>
 </div></dialog>
 
@@ -246,430 +1156,960 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 
 <script>
 'use strict';
-/* ============ helpers ============ */
-const $=s=>document.querySelector(s);
-const $$=s=>[...document.querySelectorAll(s)];
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const num=n=>Math.round(n).toLocaleString('en-US');
-const rs=n=>'Rs. '+num(n);
-const pad=n=>String(n).padStart(2,'0');
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const qtyFmt=q=>String(Math.round(q*1000)/1000);
-const dayKey=(d=new Date())=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-const fmtDT=ts=>{const d=new Date(ts);return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()+' '+pad(d.getHours())+':'+pad(d.getMinutes());};
-const billLabel=n=>'AJ-'+String(n).padStart(4,'0');
+/* ============ HELPERS ============ */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const num = n => Math.round(n).toLocaleString('en-US');
+const rs = n => 'Rs. ' + num(n);
+const pad = n => String(n).padStart(2, '0');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const qtyFmt = q => String(Math.round(q * 1000) / 1000);
+const dayKey = (d = new Date()) => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const fmtDT = ts => {
+  const d = new Date(ts);
+  return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+};
+const billLabel = n => 'AJ-' + String(n).padStart(4, '0');
+
 let toastT;
-function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2600);}
+function toast(m) {
+  const t = $('#toast');
+  t.textContent = m;
+  t.classList.add('on');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('on'), 2600);
+}
 
-/* ============ storage (IndexedDB) ============ */
+/* ============ STORAGE (IndexedDB) ============ */
 let db;
-function openDB(){return new Promise((res,rej)=>{
-  const r=indexedDB.open('aljannat-pos',1);
-  r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('kv');const s=d.createObjectStore('sales',{keyPath:'no'});s.createIndex('day','day');};
-  r.onsuccess=()=>{db=r.result;res();};
-  r.onerror=()=>rej(r.error);
-});}
-const st=(n,m='readonly')=>db.transaction(n,m).objectStore(n);
-const P=r=>new Promise((res,rej)=>{r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});
-const kvGet=k=>P(st('kv').get(k));
-const kvSet=(k,v)=>P(st('kv','readwrite').put(v,k));
-const salesAll=()=>P(st('sales').getAll());
-const salesDay=d=>P(st('sales').index('day').getAll(d));
-const salePut=s=>P(st('sales','readwrite').put(s));
-const saleDel=n=>P(st('sales','readwrite').delete(n));
+function openDB() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('aljannat-pos', 1);
+    r.onupgradeneeded = () => {
+      const d = r.result;
+      d.createObjectStore('kv');
+      const s = d.createObjectStore('sales', { keyPath: 'no' });
+      s.createIndex('day', 'day');
+    };
+    r.onsuccess = () => { db = r.result; res(); };
+    r.onerror = () => rej(r.error);
+  });
+}
+const st = (n, m = 'readonly') => db.transaction(n, m).objectStore(n);
+const P = r => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+const kvGet = k => P(st('kv').get(k));
+const kvSet = (k, v) => P(st('kv', 'readwrite').put(v, k));
+const salesAll = () => P(st('sales').getAll());
+const salesDay = d => P(st('sales').index('day').getAll(d));
+const salePut = s => P(st('sales', 'readwrite').put(s));
+const saleDel = n => P(st('sales', 'readwrite').delete(n));
 
-/* ============ defaults ============ */
-const DEFAULT_ITEMS=[
- {id:'i1',name:'Gulab Jamun',price:1400,unit:'kg',cat:'Mithai'},
- {id:'i2',name:'Barfi',price:1600,unit:'kg',cat:'Mithai'},
- {id:'i3',name:'Jalebi',price:600,unit:'kg',cat:'Mithai'},
- {id:'i4',name:'Rasgulla',price:1300,unit:'kg',cat:'Mithai'},
- {id:'i5',name:'Ladoo',price:1500,unit:'kg',cat:'Mithai'},
- {id:'i6',name:'Rabri',price:1200,unit:'kg',cat:'Mithai'},
- {id:'i7',name:'Bread',price:180,unit:'pc',cat:'Bakery'},
- {id:'i8',name:'Rusk Pack',price:150,unit:'pc',cat:'Bakery'},
- {id:'i9',name:'Naan Khatai',price:900,unit:'kg',cat:'Bakery'},
- {id:'i10',name:'Cream Roll',price:80,unit:'pc',cat:'Bakery'},
- {id:'i11',name:'Patties',price:120,unit:'pc',cat:'Bakery'},
- {id:'i12',name:'Samosa',price:40,unit:'pc',cat:'Namkeen'},
- {id:'i13',name:'Pakora',price:700,unit:'kg',cat:'Namkeen'},
- {id:'i14',name:'Pastry',price:150,unit:'pc',cat:'Cakes'},
- {id:'i15',name:'Cake 1 lb',price:1200,unit:'pc',cat:'Cakes'},
- {id:'i16',name:'Cold Drink',price:120,unit:'pc',cat:'Drinks'},
- {id:'i17',name:'Doodh 1 Litre',price:240,unit:'pc',cat:'Drinks'}
+/* ============ DEFAULTS ============ */
+const DEFAULT_ITEMS = [
+  { id: 'i1', name: 'Gulab Jamun', price: 1400, unit: 'kg', cat: 'Mithai' },
+  { id: 'i2', name: 'Barfi', price: 1600, unit: 'kg', cat: 'Mithai' },
+  { id: 'i3', name: 'Jalebi', price: 600, unit: 'kg', cat: 'Mithai' },
+  { id: 'i4', name: 'Rasgulla', price: 1300, unit: 'kg', cat: 'Mithai' },
+  { id: 'i5', name: 'Ladoo', price: 1500, unit: 'kg', cat: 'Mithai' },
+  { id: 'i6', name: 'Rabri', price: 1200, unit: 'kg', cat: 'Mithai' },
+  { id: 'i7', name: 'Bread', price: 180, unit: 'pc', cat: 'Bakery' },
+  { id: 'i8', name: 'Rusk Pack', price: 150, unit: 'pc', cat: 'Bakery' },
+  { id: 'i9', name: 'Naan Khatai', price: 900, unit: 'kg', cat: 'Bakery' },
+  { id: 'i10', name: 'Cream Roll', price: 80, unit: 'pc', cat: 'Bakery' },
+  { id: 'i11', name: 'Patties', price: 120, unit: 'pc', cat: 'Bakery' },
+  { id: 'i12', name: 'Samosa', price: 40, unit: 'pc', cat: 'Namkeen' },
+  { id: 'i13', name: 'Pakora', price: 700, unit: 'kg', cat: 'Namkeen' },
+  { id: 'i14', name: 'Pastry', price: 150, unit: 'pc', cat: 'Cakes' },
+  { id: 'i15', name: 'Cake 1 lb', price: 1200, unit: 'pc', cat: 'Cakes' },
+  { id: 'i16', name: 'Cold Drink', price: 120, unit: 'pc', cat: 'Drinks' },
+  { id: 'i17', name: 'Doodh 1 Litre', price: 240, unit: 'pc', cat: 'Drinks' }
 ];
-const DEFAULT_SETTINGS={shop:'Al Jannat Sweets & Bakers',addr:'',phone:'',footer:'Shukriya! Phir tashreef layein.',paper:'58',printer:'rawbt',lastBackup:0};
-const S={items:[],settings:{},cart:[],cat:'All',q:'',view:'sale',editId:null,billOpen:null};
-const VERSION='v1.0';
 
-/* ============ init ============ */
-async function init(){
+const DEFAULT_SETTINGS = {
+  shop: 'Al Jannat Sweets & Bakers',
+  addr: '',
+  phone: '',
+  footer: 'Shukriya! Phir tashreef layein.',
+  kotTitle: 'KITCHEN ORDER / KOT',
+  paper: '58',
+  printer: 'rawbt',
+  lastBackup: 0
+};
+
+const S = {
+  items: [],
+  settings: {},
+  cart: [],
+  cat: 'All',
+  q: '',
+  itemQ: '',
+  view: 'sale',
+  editId: null,
+  billOpen: null,
+  billTab: 'customer' // 'customer' or 'kitchen'
+};
+const VERSION = 'v2.0';
+
+/* ============ INIT ============ */
+async function init() {
   await openDB();
-  let items=await kvGet('items');
-  if(!items){items=DEFAULT_ITEMS;await kvSet('items',items);}
-  S.items=items;
-  S.settings=Object.assign({},DEFAULT_SETTINGS,(await kvGet('settings'))||{});
-  try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist();}catch(e){}
-  $('#ver').textContent=VERSION;
+  let items = await kvGet('items');
+  if (!items) { items = DEFAULT_ITEMS; await kvSet('items', items); }
+  S.items = items;
+  S.settings = Object.assign({}, DEFAULT_SETTINGS, (await kvGet('settings')) || {});
+  try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {}
+  $('#ver').textContent = VERSION;
   bind();
-  renderShell();renderCats();renderGrid();renderCartBar();
+  renderShell();
+  renderCats();
+  renderGrid();
+  renderCartBar();
   await refreshToday();
   await checkBackup();
-  if('serviceWorker' in navigator && location.protocol!=='file:'){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+
+  // Service Worker for offline PWA
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      reg.addEventListener('updatefound', () => {
+        const w = reg.installing;
+        w.addEventListener('statechange', () => {
+          if (w.state === 'installed' && navigator.serviceWorker.controller) {
+            toast('Naya update install ho gaya! Reload ho raha hai...');
+            setTimeout(() => location.reload(), 1500);
+          }
+        });
+      });
+    }).catch(() => {});
+  }
 }
 
-/* ============ navigation ============ */
-function show(v){
-  S.view=v;
-  ['sale','bills','items','set'].forEach(x=>$('#v-'+x).hidden=x!==v);
-  $$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+/* ============ NAVIGATION ============ */
+function show(v) {
+  S.view = v;
+  ['sale', 'bills', 'items', 'set'].forEach(x => $('#v-' + x).hidden = x !== v);
+  $$('nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
   renderCartBar();
-  if(v==='bills')renderBills();
-  if(v==='items')renderItems();
-  if(v==='set')renderSettings();
-  window.scrollTo(0,0);
+  if (v === 'bills') renderBills();
+  if (v === 'items') renderItems();
+  if (v === 'set') renderSettings();
+  window.scrollTo(0, 0);
 }
-function renderShell(){$('#shopName').textContent=S.settings.shop||'Al Jannat';}
+function renderShell() {
+  $('#shopName').textContent = S.settings.shop || 'Al Jannat';
+}
 
-/* ============ sale view ============ */
-function cats(){const c=[];S.items.forEach(i=>{if(i.cat&&!c.includes(i.cat))c.push(i.cat);});return ['All',...c];}
-function renderCats(){
-  $('#cats').innerHTML=cats().map(c=>`<button class="chip ${c===S.cat?'on':''}" data-c="${esc(c)}">${esc(c)}</button>`).join('');
-  $('#catList').innerHTML=cats().filter(c=>c!=='All').map(c=>`<option value="${esc(c)}">`).join('');
+/* ============ SALE VIEW ============ */
+function cats() {
+  const c = [];
+  S.items.forEach(i => { if (i.cat && !c.includes(i.cat)) c.push(i.cat); });
+  return ['All', ...c];
 }
-function renderGrid(){
-  const q=S.q.trim().toLowerCase();
-  const list=S.items.filter(i=>(S.cat==='All'||i.cat===S.cat)&&(!q||i.name.toLowerCase().includes(q)));
-  $('#grid').innerHTML=list.length?list.map(i=>`<button class="card" data-id="${esc(i.id)}"><span class="bd"></span><span class="n">${esc(i.name)}</span><span class="p">${rs(i.price)}<i>/${i.unit==='kg'?'kg':'pc'}</i></span></button>`).join(''):'<div class="empty" style="grid-column:1/-1">Koi item nahi mila. "Items" tab se naya item daalein.</div>';
+function renderCats() {
+  $('#cats').innerHTML = cats().map(c => `<button class="chip ${c === S.cat ? 'on' : ''}" data-c="${esc(c)}">${esc(c)}</button>`).join('');
+  $('#catList').innerHTML = cats().filter(c => c !== 'All').map(c => `<option value="${esc(c)}">`).join('');
+}
+function renderGrid() {
+  const q = S.q.trim().toLowerCase();
+  const list = S.items.filter(i => (S.cat === 'All' || i.cat === S.cat) && (!q || i.name.toLowerCase().includes(q)));
+  $('#grid').innerHTML = list.length
+    ? list.map(i => `
+      <button class="card" data-id="${esc(i.id)}">
+        <span class="bd"></span>
+        <span class="n">${esc(i.name)}</span>
+        <span class="p">${rs(i.price)}<i>/${i.unit === 'kg' ? 'kg' : 'pc'}</i></span>
+      </button>`).join('')
+    : '<div class="empty" style="grid-column:1/-1">Koi item nahi mila. "Items" tab se naya item daalein.</div>';
   updateBadges();
 }
-function updateBadges(){
-  $$('#grid .card').forEach(c=>{
-    const l=S.cart.find(x=>x.id===c.dataset.id);const b=c.querySelector('.bd');
-    if(l){b.textContent=qtyFmt(l.qty);b.classList.add('on');}else b.classList.remove('on');
+function updateBadges() {
+  $$('#grid .card').forEach(c => {
+    const l = S.cart.find(x => x.id === c.dataset.id);
+    const b = c.querySelector('.bd');
+    if (l) { b.textContent = qtyFmt(l.qty); b.classList.add('on'); }
+    else b.classList.remove('on');
   });
 }
-function addToCart(id){
-  const it=S.items.find(i=>i.id===id);if(!it)return;
-  const l=S.cart.find(c=>c.id===id);
-  const step=it.unit==='kg'?0.5:1;
-  if(l)l.qty=Math.round((l.qty+step)*1000)/1000;
-  else S.cart.push({id:it.id,name:it.name,price:it.price,unit:it.unit,qty:step});
-  updateBadges();renderCartBar();
-  try{navigator.vibrate&&navigator.vibrate(12);}catch(e){}
+function addToCart(id) {
+  const it = S.items.find(i => i.id === id);
+  if (!it) return;
+  const l = S.cart.find(c => c.id === id);
+  const step = it.unit === 'kg' ? 0.5 : 1;
+  if (l) l.qty = Math.round((l.qty + step) * 1000) / 1000;
+  else S.cart.push({ id: it.id, name: it.name, price: it.price, unit: it.unit, qty: step });
+  updateBadges();
+  renderCartBar();
+  try { navigator.vibrate && navigator.vibrate(15); } catch (e) {}
 }
-const lineTotal=l=>Math.round(l.qty*l.price);
-const subtotal=()=>S.cart.reduce((a,l)=>a+lineTotal(l),0);
-const discount=()=>Math.min(subtotal(),Math.max(0,Number($('#disc').value)||0));
-const total=()=>subtotal()-discount();
-function renderCartBar(){
-  const n=S.cart.length;
-  $('#cartbar').hidden=!(S.view==='sale'&&n>0);
-  $('#cartCount').textContent=n+(n===1?' item':' items');
-  $('#cartTotal').textContent=rs(subtotal());
+const lineTotal = l => Math.round(l.qty * l.price);
+const subtotal = () => S.cart.reduce((a, l) => a + lineTotal(l), 0);
+const discount = () => Math.min(subtotal(), Math.max(0, Number($('#disc').value) || 0));
+const total = () => subtotal() - discount();
+
+function renderCartBar() {
+  const n = S.cart.length;
+  $('#cartbar').hidden = !(S.view === 'sale' && n > 0);
+  $('#cartCount').textContent = n + (n === 1 ? ' item' : ' items');
+  $('#cartTotal').textContent = rs(subtotal());
 }
 
-/* ============ cart dialog ============ */
-function openCart(){renderCartDlg();$('#cartDlg').showModal();}
-function renderCartDlg(){
-  $('#cartLines').innerHTML=S.cart.length?S.cart.map((l,i)=>`
-   <div class="cl" data-i="${i}">
-     <div class="t"><span>${esc(l.name)}</span><span>${rs(lineTotal(l))}</span></div>
-     <div class="c">
-       <div class="q"><button data-a="dec">−</button><input data-a="qty" type="number" inputmode="decimal" step="any" value="${qtyFmt(l.qty)}"><button data-a="inc">+</button><small style="color:var(--mute)">${l.unit==='kg'?'kg':'pc'} × ${num(l.price)}</small></div>
-       <button class="x" data-a="del" aria-label="hataein">×</button>
-     </div>
-   </div>`).join(''):'<div class="empty">Cart khali hai</div>';
+/* ============ CART / BILL DIALOG ============ */
+function openCart() {
+  renderCartDlg();
+  $('#cartDlg').showModal();
+}
+function renderCartDlg() {
+  $('#cartLines').innerHTML = S.cart.length ? S.cart.map((l, i) => `
+    <div class="cl" data-i="${i}">
+      <div class="t"><span>${esc(l.name)}</span><span>${rs(lineTotal(l))}</span></div>
+      <div class="c">
+        <div class="q">
+          <button data-a="dec">−</button>
+          <input data-a="qty" type="number" inputmode="decimal" step="any" value="${qtyFmt(l.qty)}">
+          <button data-a="inc">+</button>
+          <small style="color:var(--mute)">${l.unit === 'kg' ? 'kg' : 'pc'} × ${num(l.price)}</small>
+        </div>
+        <button class="x" data-a="del" aria-label="hataein">×</button>
+      </div>
+    </div>`).join('') : '<div class="empty">Cart khali hai</div>';
   renderTotals();
 }
-function renderTotals(){
-  const sub=subtotal(),d=discount(),t=sub-d;
-  $('#tSub').textContent=rs(sub);$('#tDisc').textContent=d?'− '+rs(d):rs(0);$('#tTot').textContent=rs(t);
-  const r=$('#recv').value===''?t:Number($('#recv').value)||0;
-  $('#tChange').textContent=r>=t?rs(r-t):'kam hai';
-  const opts=[500,1000,5000].filter(x=>x>=t);
-  $('#quick').innerHTML='<button data-r="">Exact</button>'+opts.map(x=>`<button data-r="${x}">${num(x)}</button>`).join('');
-  $('#savePrint').disabled=!S.cart.length;
+function renderTotals() {
+  const sub = subtotal(), d = discount(), t = sub - d;
+  $('#tSub').textContent = rs(sub);
+  $('#tDisc').textContent = d ? '− ' + rs(d) : rs(0);
+  $('#tTot').textContent = rs(t);
+
+  const rawRecv = $('#recv').value;
+  const r = rawRecv === '' ? t : Number(rawRecv) || 0;
+  const change = r - t;
+
+  const cb = $('#changeBox');
+  if (change >= 0) {
+    cb.className = 'change-box ok';
+    $('#tChange').textContent = rs(change);
+  } else {
+    cb.className = 'change-box bad';
+    $('#tChange').textContent = rs(Math.abs(change)) + ' kam hain';
+  }
+
+  // Quick buttons
+  const opts = [500, 1000, 2000, 5000].filter(x => x >= t);
+  const isExact = rawRecv === '' || Number(rawRecv) === t;
+  $('#quick').innerHTML = `<button class="${isExact ? 'active' : ''}" data-r="">Exact (${num(t)})</button>` +
+    opts.map(x => `<button class="${Number(rawRecv) === x ? 'active' : ''}" data-r="${x}">${num(x)}</button>`).join('');
+
+  const hasItems = S.cart.length > 0;
+  $('#saveBoth').disabled = !hasItems;
+  $('#saveKitchen').disabled = !hasItems;
+  $('#saveCustomer').disabled = !hasItems;
 }
-function cartAction(e){
-  const line=e.target.closest('.cl');if(!line)return;
-  const i=+line.dataset.i,l=S.cart[i],a=e.target.dataset.a;if(!l||!a)return;
-  const step=l.unit==='kg'?0.25:1;
-  if(a==='inc')l.qty=Math.round((l.qty+step)*1000)/1000;
-  else if(a==='dec'){l.qty=Math.round((l.qty-step)*1000)/1000;if(l.qty<=0)S.cart.splice(i,1);}
-  else if(a==='del')S.cart.splice(i,1);
+function cartAction(e) {
+  const line = e.target.closest('.cl');
+  if (!line) return;
+  const i = +line.dataset.i, l = S.cart[i], a = e.target.dataset.a;
+  if (!l || !a) return;
+  const step = l.unit === 'kg' ? 0.25 : 1;
+  if (a === 'inc') l.qty = Math.round((l.qty + step) * 1000) / 1000;
+  else if (a === 'dec') {
+    l.qty = Math.round((l.qty - step) * 1000) / 1000;
+    if (l.qty <= 0) S.cart.splice(i, 1);
+  }
+  else if (a === 'del') S.cart.splice(i, 1);
   else return;
-  renderCartDlg();renderCartBar();updateBadges();
+  renderCartDlg();
+  renderCartBar();
+  updateBadges();
 }
-function cartQtyChange(e){
-  if(e.target.dataset.a!=='qty')return;
-  const line=e.target.closest('.cl');const i=+line.dataset.i,l=S.cart[i];
-  const v=Number(e.target.value);
-  if(!(v>0))S.cart.splice(i,1);else l.qty=Math.round(v*1000)/1000;
-  renderCartDlg();renderCartBar();updateBadges();
-}
-async function saveSale(print){
-  if(!S.cart.length){toast('Cart khali hai');return;}
-  const t=total();
-  const rec=$('#recv').value===''?t:Number($('#recv').value);
-  if(!(rec>=t)){toast('Customer ke diye paise bill se kam hain');return;}
-  const counter=((await kvGet('counter'))||0)+1;
-  await kvSet('counter',counter);
-  const now=new Date();
-  const sale={no:counter,ts:now.getTime(),day:dayKey(now),
-    lines:S.cart.map(l=>({id:l.id,name:l.name,price:l.price,unit:l.unit,qty:l.qty,total:lineTotal(l)})),
-    sub:subtotal(),disc:discount(),total:t,recv:rec,change:rec-t};
-  await salePut(sale);
-  S.cart=[];$('#disc').value='';$('#recv').value='';
-  $('#cartDlg').close();updateBadges();renderCartBar();
-  await refreshToday();await checkBackup();
-  toast('Bill '+billLabel(sale.no)+' save ho gaya');
-  if(print)await printSale(sale);
-}
-async function refreshToday(){
-  const list=await salesDay(dayKey());
-  $('#todayTotal').textContent=rs(list.reduce((a,s)=>a+s.total,0));
+function cartQtyChange(e) {
+  if (e.target.dataset.a !== 'qty') return;
+  const line = e.target.closest('.cl');
+  const i = +line.dataset.i, l = S.cart[i];
+  const v = Number(e.target.value);
+  if (!(v > 0)) S.cart.splice(i, 1);
+  else l.qty = Math.round(v * 1000) / 1000;
+  renderCartDlg();
+  renderCartBar();
+  updateBadges();
 }
 
-/* ============ receipt model ============ */
-function wrap(t,w){
-  const out=[];let cur='';
-  for(let word of String(t).split(/\s+/)){
-    if(!word)continue;
-    while(word.length>w){if(cur){out.push(cur);cur='';}out.push(word.slice(0,w));word=word.slice(w);}
-    if(!cur)cur=word;else if((cur+' '+word).length<=w)cur+=' '+word;else{out.push(cur);cur=word;}
+/* ============ SAVE SALE ============ */
+// printTarget: 'both' | 'kitchen' | 'customer' | null
+async function saveSale(printTarget) {
+  if (!S.cart.length) { toast('Cart khali hai'); return; }
+  const t = total();
+  const rawRecv = $('#recv').value;
+  const rec = rawRecv === '' ? t : Number(rawRecv);
+  if (!(rec >= t)) { toast('Customer ke diye paise bill se kam hain'); return; }
+
+  const counter = ((await kvGet('counter')) || 0) + 1;
+  await kvSet('counter', counter);
+  const now = new Date();
+  const note = $('#kNote').value.trim();
+
+  const sale = {
+    no: counter,
+    ts: now.getTime(),
+    day: dayKey(now),
+    note: note,
+    lines: S.cart.map(l => ({ id: l.id, name: l.name, price: l.price, unit: l.unit, qty: l.qty, total: lineTotal(l) })),
+    sub: subtotal(),
+    disc: discount(),
+    total: t,
+    recv: rec,
+    change: rec - t
+  };
+
+  await salePut(sale);
+  S.cart = [];
+  $('#disc').value = '';
+  $('#recv').value = '';
+  $('#kNote').value = '';
+  $('#cartDlg').close();
+  updateBadges();
+  renderCartBar();
+  await refreshToday();
+  await checkBackup();
+
+  toast('Bill ' + billLabel(sale.no) + ' save ho gaya');
+  if (printTarget) {
+    await printSale(sale, printTarget);
   }
-  if(cur)out.push(cur);
-  return out.length?out:[''];
 }
-function receiptModel(s){
-  const T=S.settings,W=T.paper==='80'?48:32;
-  const L=[];const add=(text,o)=>L.push(Object.assign({text,align:'l',st:''},o||{}));
-  const row=(a,b)=>{a=String(a);b=String(b);const sp=W-a.length-b.length;return sp>0?a+' '.repeat(sp)+b:a.slice(0,Math.max(0,W-b.length-1))+' '+b;};
-  wrap(T.shop||'Al Jannat',Math.floor(W/2)).forEach(x=>add(x,{align:'c',st:'title'}));
-  if(T.addr)wrap(T.addr,W).forEach(x=>add(x,{align:'c'}));
-  if(T.phone)add('Tel: '+T.phone,{align:'c'});
+
+async function refreshToday() {
+  const list = await salesDay(dayKey());
+  $('#todayTotal').textContent = rs(list.reduce((a, s) => a + s.total, 0));
+}
+
+/* ============ RECEIPT MODELS ============ */
+function wrap(t, w) {
+  const out = []; let cur = '';
+  for (let word of String(t).split(/\s+/)) {
+    if (!word) continue;
+    while (word.length > w) {
+      if (cur) { out.push(cur); cur = ''; }
+      out.push(word.slice(0, w));
+      word = word.slice(w);
+    }
+    if (!cur) cur = word;
+    else if ((cur + ' ' + word).length <= w) cur += ' ' + word;
+    else { out.push(cur); cur = word; }
+  }
+  if (cur) out.push(cur);
+  return out.length ? out : [''];
+}
+
+// 1. CUSTOMER RECEIPT MODEL
+function customerReceiptModel(s) {
+  const T = S.settings, W = T.paper === '80' ? 48 : 32;
+  const L = [];
+  const add = (text, o) => L.push(Object.assign({ text, align: 'l', st: '' }, o || {}));
+  const row = (a, b) => {
+    a = String(a); b = String(b);
+    const sp = W - a.length - b.length;
+    return sp > 0 ? a + ' '.repeat(sp) + b : a.slice(0, Math.max(0, W - b.length - 1)) + ' ' + b;
+  };
+
+  wrap(T.shop || 'Al Jannat', Math.floor(W / 2)).forEach(x => add(x, { align: 'c', st: 'title' }));
+  if (T.addr) wrap(T.addr, W).forEach(x => add(x, { align: 'c' }));
+  if (T.phone) add('Tel: ' + T.phone, { align: 'c' });
   add('-'.repeat(W));
-  add(row('Bill: '+billLabel(s.no),fmtDT(s.ts)));
+  add(row('Bill: ' + billLabel(s.no), fmtDT(s.ts)));
+  if (s.note) add(row('Note/Table:', s.note));
   add('-'.repeat(W));
-  s.lines.forEach(l=>{
-    wrap(l.name,W).forEach(x=>add(x));
-    add(row('  '+qtyFmt(l.qty)+' '+(l.unit==='kg'?'kg':'pc')+' x '+num(l.price),num(l.total)));
+
+  s.lines.forEach(l => {
+    wrap(l.name, W).forEach(x => add(x));
+    add(row('  ' + qtyFmt(l.qty) + ' ' + (l.unit === 'kg' ? 'kg' : 'pc') + ' x ' + num(l.price), num(l.total)));
   });
   add('-'.repeat(W));
-  if(s.disc>0){add(row('Subtotal',num(s.sub)));add(row('Discount','-'+num(s.disc)));}
-  add(row('TOTAL',rs(s.total)),{st:'bold'});
-  add(row('Received',num(s.recv)));
-  add(row('Change',num(s.change)));
+  if (s.disc > 0) {
+    add(row('Subtotal', num(s.sub)));
+    add(row('Discount', '-' + num(s.disc)));
+  }
+  add(row('TOTAL', rs(s.total)), { st: 'bold' });
+  add(row('Received', num(s.recv)));
+  add(row('Change', num(s.change)));
   add('-'.repeat(W));
-  if(T.footer)wrap(T.footer,W).forEach(x=>add(x,{align:'c'}));
+  if (T.footer) wrap(T.footer, W).forEach(x => add(x, { align: 'c' }));
   return L;
 }
-function receiptPlain(s){return receiptModel(s).map(l=>{
-  const W=S.settings.paper==='80'?48:32;
-  if(l.align==='c'){const sp=Math.max(0,Math.floor((W-l.text.length)/2));return ' '.repeat(sp)+l.text;}
-  return l.text;}).join('\n');}
 
-/* ============ printing ============ */
-function escpos(s){
-  const b=[0x1B,0x40];
-  for(const l of receiptModel(s)){
-    b.push(0x1B,0x61,l.align==='c'?1:0, 0x1B,0x45,l.st?1:0, 0x1D,0x21,l.st==='title'?0x11:0);
-    for(const ch of l.text){const c=ch.charCodeAt(0);b.push(c>=32&&c<127?c:63);}
+// 2. KITCHEN SLIP MODEL (KOT)
+function kitchenReceiptModel(s) {
+  const T = S.settings, W = T.paper === '80' ? 48 : 32;
+  const L = [];
+  const add = (text, o) => L.push(Object.assign({ text, align: 'l', st: '' }, o || {}));
+  const row = (a, b) => {
+    a = String(a); b = String(b);
+    const sp = W - a.length - b.length;
+    return sp > 0 ? a + ' '.repeat(sp) + b : a.slice(0, Math.max(0, W - b.length - 1)) + ' ' + b;
+  };
+
+  add(T.kotTitle || 'KITCHEN ORDER / KOT', { align: 'c', st: 'title' });
+  add(T.shop || 'Al Jannat', { align: 'c' });
+  add('='.repeat(W));
+  add(row('TOKEN: #' + s.no, fmtDT(s.ts)), { st: 'bold' });
+  add(row('Bill: ' + billLabel(s.no), ''));
+  if (s.note) {
+    add('-'.repeat(W));
+    add('>> NOTE / TABLE: ' + s.note.toUpperCase(), { align: 'c', st: 'title' });
+  }
+  add('='.repeat(W));
+  add(row('QTY', 'ITEM (NAME)'), { st: 'bold' });
+  add('-'.repeat(W));
+
+  let totalUnits = 0;
+  s.lines.forEach(l => {
+    totalUnits += (l.unit === 'pc' ? l.qty : 1);
+    const qStr = qtyFmt(l.qty) + ' ' + (l.unit === 'kg' ? 'kg' : 'pc');
+    wrap('[' + qStr + ']  ' + l.name, W).forEach(x => add(x, { st: 'bold' }));
+  });
+
+  add('-'.repeat(W));
+  add(row('Total Items:', s.lines.length + ' (' + totalUnits + ' units)'));
+  add('='.repeat(W));
+  add('*** BAWARCHI KHANA / PACKING ***', { align: 'c' });
+  return L;
+}
+
+function receiptPlain(s, target = 'customer') {
+  const model = target === 'kitchen' ? kitchenReceiptModel(s) : customerReceiptModel(s);
+  const W = S.settings.paper === '80' ? 48 : 32;
+  return model.map(l => {
+    if (l.align === 'c') {
+      const sp = Math.max(0, Math.floor((W - l.text.length) / 2));
+      return ' '.repeat(sp) + l.text;
+    }
+    return l.text;
+  }).join('\n');
+}
+
+/* ============ PRINT ENGINE ============ */
+function escposSingle(model) {
+  const b = [0x1B, 0x40]; // Initialize printer
+  for (const l of model) {
+    b.push(
+      0x1B, 0x61, l.align === 'c' ? 1 : 0,
+      0x1B, 0x45, l.st ? 1 : 0,
+      0x1D, 0x21, l.st === 'title' ? 0x11 : 0
+    );
+    for (const ch of l.text) {
+      const c = ch.charCodeAt(0);
+      b.push(c >= 32 && c < 127 ? c : 63);
+    }
     b.push(0x0A);
   }
-  b.push(0x1B,0x45,0, 0x1D,0x21,0, 0x1B,0x61,0, 0x1B,0x64,4, 0x1D,0x56,0x42,0x00);
+  // Feed 4 lines and cut paper
+  b.push(0x1B, 0x45, 0, 0x1D, 0x21, 0, 0x1B, 0x61, 0, 0x1B, 0x64, 4, 0x1D, 0x56, 0x42, 0x00);
   return b;
 }
-function toB64(bytes){let bin='';for(let i=0;i<bytes.length;i+=8192)bin+=String.fromCharCode.apply(null,bytes.slice(i,i+8192));return btoa(bin);}
-function rawbtSend(bytes){location.href='rawbt:base64,'+toB64(bytes);}
-function browserPrint(s){
-  const w=S.settings.paper==='80'?'80mm':'58mm';
-  const fs=S.settings.paper==='80'?'10.4px':'11px';
-  const r=$('#rcpt');r.style.width=w;r.style.fontSize=fs;
-  r.innerHTML=receiptModel(s).map(l=>`<div class="rl ${l.align==='c'?'c':''} ${l.st}">${esc(l.text)||'&nbsp;'}</div>`).join('');
-  setTimeout(()=>window.print(),60);
+
+function escpos(s, target = 'customer') {
+  if (target === 'both') {
+    const kBytes = escposSingle(kitchenReceiptModel(s));
+    const cBytes = escposSingle(customerReceiptModel(s));
+    // Combine both slips with a feed separator
+    return [...kBytes, 0x1B, 0x64, 3, ...cBytes];
+  }
+  const model = target === 'kitchen' ? kitchenReceiptModel(s) : customerReceiptModel(s);
+  return escposSingle(model);
 }
-const BLE_SERVICES=['000018f0-0000-1000-8000-00805f9b34fb','0000ff00-0000-1000-8000-00805f9b34fb','e7810a71-73ae-499d-8c15-faa9aef0c3f2','49535343-fe7d-4ae5-8fa9-9fafd205e455','0000ffe0-0000-1000-8000-00805f9b34fb','0000fee7-0000-1000-8000-00805f9b34fb'];
-let bleDev=null,bleChar=null;
-async function bleFindChar(server){
-  for(const sv of await server.getPrimaryServices()){
-    for(const c of await sv.getCharacteristics()){
-      if(c.properties.write||c.properties.writeWithoutResponse)return c;
+
+function toB64(bytes) {
+  let bin = '';
+  for (let i = 0; i < bytes.length; i += 8192) {
+    bin += String.fromCharCode.apply(null, bytes.slice(i, i + 8192));
+  }
+  return btoa(bin);
+}
+
+function rawbtSend(bytes) {
+  location.href = 'rawbt:base64,' + toB64(bytes);
+}
+
+function browserPrint(s, target = 'customer') {
+  const w = S.settings.paper === '80' ? '80mm' : '58mm';
+  const fs = S.settings.paper === '80' ? '10.4px' : '11px';
+  const r = $('#rcpt');
+  r.style.width = w;
+  r.style.fontSize = fs;
+
+  let html = '';
+  const renderTicket = model => `
+    <div class="rcpt-ticket">
+      ${model.map(l => `<div class="rl ${l.align === 'c' ? 'c' : ''} ${l.st}">${esc(l.text) || '&nbsp;'}</div>`).join('')}
+    </div>`;
+
+  if (target === 'both') {
+    html = renderTicket(kitchenReceiptModel(s)) + renderTicket(customerReceiptModel(s));
+  } else if (target === 'kitchen') {
+    html = renderTicket(kitchenReceiptModel(s));
+  } else {
+    html = renderTicket(customerReceiptModel(s));
+  }
+
+  r.innerHTML = html;
+  setTimeout(() => window.print(), 80);
+}
+
+const BLE_SERVICES = [
+  '000018f0-0000-1000-8000-00805f9b34fb',
+  '0000ff00-0000-1000-8000-00805f9b34fb',
+  'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
+  '49535343-fe7d-4ae5-8fa9-9fafd205e455',
+  '0000ffe0-0000-1000-8000-00805f9b34fb',
+  '0000fee7-0000-1000-8000-00805f9b34fb'
+];
+let bleDev = null, bleChar = null;
+
+async function bleFindChar(server) {
+  for (const sv of await server.getPrimaryServices()) {
+    for (const c of await sv.getCharacteristics()) {
+      if (c.properties.write || c.properties.writeWithoutResponse) return c;
     }
   }
   throw new Error('Printer ka write channel nahi mila — RawBT use karein');
 }
-async function bleConnect(){
-  if(!navigator.bluetooth)throw new Error('Is browser mein Bluetooth nahi — Android Chrome use karein');
-  bleDev=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:BLE_SERVICES});
-  bleDev.addEventListener('gattserverdisconnected',()=>{bleChar=null;});
-  bleChar=await bleFindChar(await bleDev.gatt.connect());
+
+async function bleConnect() {
+  if (!navigator.bluetooth) throw new Error('Is browser mein Bluetooth nahi — Android Chrome use karein');
+  bleDev = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: BLE_SERVICES });
+  bleDev.addEventListener('gattserverdisconnected', () => { bleChar = null; });
+  bleChar = await bleFindChar(await bleDev.gatt.connect());
 }
-async function bleSend(bytes){
-  if(bleDev&&!bleDev.gatt.connected){try{bleChar=await bleFindChar(await bleDev.gatt.connect());}catch(e){bleDev=null;bleChar=null;}}
-  if(!bleChar)await bleConnect();
-  const d=new Uint8Array(bytes);
-  for(let i=0;i<d.length;i+=100){
-    const ch=d.slice(i,i+100);
-    if(bleChar.properties.writeWithoutResponse)await bleChar.writeValueWithoutResponse(ch);else await bleChar.writeValue(ch);
+
+async function bleSend(bytes) {
+  if (bleDev && !bleDev.gatt.connected) {
+    try { bleChar = await bleFindChar(await bleDev.gatt.connect()); }
+    catch (e) { bleDev = null; bleChar = null; }
+  }
+  if (!bleChar) await bleConnect();
+  const d = new Uint8Array(bytes);
+  for (let i = 0; i < d.length; i += 100) {
+    const ch = d.slice(i, i + 100);
+    if (bleChar.properties.writeWithoutResponse) await bleChar.writeValueWithoutResponse(ch);
+    else await bleChar.writeValue(ch);
     await sleep(25);
   }
 }
-async function printSale(s){
-  const mode=S.settings.printer;
-  try{
-    if(mode==='ble')await bleSend(escpos(s));
-    else if(mode==='rawbt')rawbtSend(escpos(s));
-    else browserPrint(s);
-  }catch(e){toast('Print nahi hua: '+(e&&e.message?e.message:e));}
+
+async function printSale(s, target = 'customer') {
+  const mode = S.settings.printer;
+  try {
+    const bytes = escpos(s, target);
+    if (mode === 'ble') await bleSend(bytes);
+    else if (mode === 'rawbt') rawbtSend(bytes);
+    else browserPrint(s, target);
+  } catch (e) {
+    toast('Print nahi hua: ' + (e && e.message ? e.message : e));
+  }
 }
 
-/* ============ bills view ============ */
-async function renderBills(){
-  const inp=$('#billDay');if(!inp.value)inp.value=dayKey();
-  const list=(await salesDay(inp.value)).sort((a,b)=>b.no-a.no);
-  $('#stCount').textContent=list.length;
-  $('#stTotal').textContent=rs(list.reduce((a,s)=>a+s.total,0));
-  const m={};
-  list.forEach(s=>s.lines.forEach(l=>{const k=l.name+'|'+l.unit;(m[k]=m[k]||{name:l.name,unit:l.unit,qty:0,total:0});m[k].qty+=l.qty;m[k].total+=l.total;}));
-  const top=Object.values(m).sort((a,b)=>b.total-a.total);
-  $('#topItems').innerHTML=top.length?'<h2>Item ke hisaab se</h2><div class="list">'+top.map(t=>`<div class="it"><div class="l"><b>${esc(t.name)}</b><small>${qtyFmt(t.qty)} ${t.unit==='kg'?'kg':'pc'}</small></div><div class="r">${rs(t.total)}</div></div>`).join('')+'</div>':'';
-  $('#billList').innerHTML=list.length?list.map(s=>`<button class="it" data-no="${s.no}"><div class="l"><b>${billLabel(s.no)}</b><small>${pad(new Date(s.ts).getHours())}:${pad(new Date(s.ts).getMinutes())} · ${s.lines.length} item</small></div><div class="r">${rs(s.total)}</div></button>`).join(''):'<div class="empty">Is din koi bill nahi</div>';
+/* ============ BILLS VIEW ============ */
+async function renderBills() {
+  const inp = $('#billDay');
+  if (!inp.value) inp.value = dayKey();
+  const list = (await salesDay(inp.value)).sort((a, b) => b.no - a.no);
+
+  $('#stCount').textContent = list.length;
+  $('#stTotal').textContent = rs(list.reduce((a, s) => a + s.total, 0));
+
+  const m = {};
+  list.forEach(s => s.lines.forEach(l => {
+    const k = l.name + '|' + l.unit;
+    m[k] = m[k] || { name: l.name, unit: l.unit, qty: 0, total: 0 };
+    m[k].qty += l.qty;
+    m[k].total += l.total;
+  }));
+
+  const top = Object.values(m).sort((a, b) => b.total - a.total);
+  $('#topItems').innerHTML = top.length ? `
+    <h2>Item ke hisaab se bikri</h2>
+    <div class="list">${top.map(t => `
+      <div class="it">
+        <div class="l">
+          <b>${esc(t.name)}</b>
+          <small>${qtyFmt(t.qty)} ${t.unit === 'kg' ? 'kg' : 'pc'}</small>
+        </div>
+        <div class="r">${rs(t.total)}</div>
+      </div>`).join('')}</div>` : '';
+
+  $('#billList').innerHTML = list.length ? list.map(s => `
+    <button class="it" data-no="${s.no}">
+      <div class="l">
+        <b>${billLabel(s.no)}</b>
+        <small>
+          <span>${pad(new Date(s.ts).getHours())}:${pad(new Date(s.ts).getMinutes())}</span>
+          <span>· ${s.lines.length} items</span>
+          ${s.note ? `<span class="tag">${esc(s.note)}</span>` : ''}
+        </small>
+      </div>
+      <div class="r">${rs(s.total)}</div>
+    </button>`).join('') : '<div class="empty">Is din koi bill nahi mila</div>';
 }
-async function openBill(no){
-  const s=(await salesAll()).find(x=>x.no===no);if(!s)return;
-  S.billOpen=s;
-  $('#bdTitle').textContent=billLabel(s.no);
-  $('#bdBody').textContent=receiptPlain(s);
+
+async function openBill(no) {
+  const s = (await salesAll()).find(x => x.no === no);
+  if (!s) return;
+  S.billOpen = s;
+  S.billTab = 'customer';
+  $('#bdTitle').textContent = billLabel(s.no);
+  renderBillPreview();
   $('#billDlg').showModal();
 }
 
-/* ============ items view ============ */
-function renderItems(){
-  $('#itemList').innerHTML=S.items.length?S.items.map(i=>`<button class="it" data-id="${esc(i.id)}"><div class="l"><b>${esc(i.name)}</b><small>${esc(i.cat||'')}</small></div><div class="r">${rs(i.price)}/${i.unit==='kg'?'kg':'pc'}</div></button>`).join(''):'<div class="empty">Koi item nahi</div>';
+function renderBillPreview() {
+  if (!S.billOpen) return;
+  $('#tabRcptCust').classList.toggle('on', S.billTab === 'customer');
+  $('#tabRcptKitch').classList.toggle('on', S.billTab === 'kitchen');
+  $('#bdBody').textContent = receiptPlain(S.billOpen, S.billTab);
 }
-function openItem(id){
-  S.editId=id;const it=S.items.find(i=>i.id===id);
-  $('#itemTitle').textContent=it?'Item badlein':'Naya item';
-  $('#fName').value=it?it.name:'';$('#fPrice').value=it?it.price:'';$('#fUnit').value=it?it.unit:'pc';$('#fCat').value=it?it.cat:(S.cat!=='All'?S.cat:'');
-  $('#itemDel').hidden=!it;
+
+/* ============ ITEMS VIEW ============ */
+function renderItems() {
+  const q = (S.itemQ || '').trim().toLowerCase();
+  const list = S.items.filter(i => !q || i.name.toLowerCase().includes(q) || (i.cat && i.cat.toLowerCase().includes(q)));
+  $('#itemList').innerHTML = list.length ? list.map(i => `
+    <button class="it" data-id="${esc(i.id)}">
+      <div class="l">
+        <b>${esc(i.name)}</b>
+        <small>${esc(i.cat || '')}</small>
+      </div>
+      <div class="r">${rs(i.price)}/${i.unit === 'kg' ? 'kg' : 'pc'}</div>
+    </button>`).join('') : '<div class="empty">Koi item nahi mila</div>';
+}
+
+function openItem(id) {
+  S.editId = id;
+  const it = S.items.find(i => i.id === id);
+  $('#itemTitle').textContent = it ? 'Item badlein' : 'Naya item';
+  $('#fName').value = it ? it.name : '';
+  $('#fPrice').value = it ? it.price : '';
+  $('#fUnit').value = it ? it.unit : 'pc';
+  $('#fCat').value = it ? it.cat : (S.cat !== 'All' ? S.cat : '');
+  $('#itemDel').hidden = !it;
   $('#itemDlg').showModal();
 }
-async function saveItem(){
-  const name=$('#fName').value.trim(),price=Number($('#fPrice').value),unit=$('#fUnit').value,cat=$('#fCat').value.trim()||'Other';
-  if(!name){toast('Naam likhein');return;}
-  if(!(price>=0)||$('#fPrice').value===''){toast('Rate likhein');return;}
-  if(S.editId){const it=S.items.find(i=>i.id===S.editId);Object.assign(it,{name,price,unit,cat});
-    S.cart.forEach(l=>{if(l.id===it.id){l.name=name;l.price=price;l.unit=unit;}});}
-  else S.items.push({id:'i'+Date.now(),name,price,unit,cat});
-  await kvSet('items',S.items);
-  $('#itemDlg').close();renderItems();renderCats();renderGrid();renderCartBar();
+
+async function saveItem() {
+  const name = $('#fName').value.trim();
+  const price = Number($('#fPrice').value);
+  const unit = $('#fUnit').value;
+  const cat = $('#fCat').value.trim() || 'Other';
+  if (!name) { toast('Naam likhein'); return; }
+  if (!(price >= 0) || $('#fPrice').value === '') { toast('Rate likhein'); return; }
+
+  if (S.editId) {
+    const it = S.items.find(i => i.id === S.editId);
+    Object.assign(it, { name, price, unit, cat });
+    S.cart.forEach(l => {
+      if (l.id === it.id) { l.name = name; l.price = price; l.unit = unit; }
+    });
+  } else {
+    S.items.push({ id: 'i' + Date.now(), name, price, unit, cat });
+  }
+
+  await kvSet('items', S.items);
+  $('#itemDlg').close();
+  renderItems();
+  renderCats();
+  renderGrid();
+  renderCartBar();
   toast('Item save ho gaya');
 }
-async function delItem(){
-  if(!confirm('Yeh item delete karein? (purane bills par asar nahi hoga)'))return;
-  S.items=S.items.filter(i=>i.id!==S.editId);S.cart=S.cart.filter(l=>l.id!==S.editId);
-  await kvSet('items',S.items);
-  if(S.cat!=='All'&&!cats().includes(S.cat))S.cat='All';
-  $('#itemDlg').close();renderItems();renderCats();renderGrid();renderCartBar();
+
+async function delItem() {
+  if (!confirm('Yeh item delete karein? (Purane bills par asar nahi hoga)')) return;
+  S.items = S.items.filter(i => i.id !== S.editId);
+  S.cart = S.cart.filter(l => l.id !== S.editId);
+  await kvSet('items', S.items);
+  if (S.cat !== 'All' && !cats().includes(S.cat)) S.cat = 'All';
+  $('#itemDlg').close();
+  renderItems();
+  renderCats();
+  renderGrid();
+  renderCartBar();
+  toast('Item delete ho gaya');
 }
 
-/* ============ settings ============ */
-const HINTS={
-  rawbt:'Play Store se "RawBT" app install karein, apna Bluetooth printer phone se pair karein (Settings → Bluetooth), RawBT mein printer chunein. Phir yahan se Print dabane par receipt RawBT se nikalegi.',
-  ble:'Sirf BLE (Bluetooth Low Energy) printers ke liye. "Bluetooth printer jorein" dabayein aur printer chunein. Agar na chale to RawBT use karein.',
-  browser:'Phone ka apna print dialog khulta hai. WiFi/USB printer ya PDF ke liye.'
+/* ============ SETTINGS VIEW ============ */
+const HINTS = {
+  rawbt: 'Play Store se "RawBT" app install karein, apna Bluetooth printer phone se pair karein (Settings → Bluetooth), RawBT mein printer chunein. Phir yahan se Print dabane par receipt RawBT se foran nikalegi.',
+  ble: 'Sirf BLE (Bluetooth Low Energy) printers ke liye. "Bluetooth printer jorein" dabayein aur printer chunein. Agar na chale to RawBT use karein.',
+  browser: 'Phone ka apna print dialog khulta hai. WiFi/USB printer ya PDF ke liye.'
 };
-function renderSettings(){
-  $$('[data-k]').forEach(el=>el.value=S.settings[el.dataset.k]??'');
-  $('#printerHint').textContent=HINTS[S.settings.printer]||'';
-  $('#btConnect').hidden=S.settings.printer!=='ble';
-}
-async function setSetting(k,v){S.settings[k]=v;await kvSet('settings',S.settings);if(k==='shop')renderShell();if(k==='printer')renderSettings();}
-async function testPrint(){
-  const now=Date.now();
-  await printSale({no:0,ts:now,day:dayKey(),lines:[{name:'Test Item',price:100,unit:'pc',qty:2,total:200},{name:'Gulab Jamun',price:1400,unit:'kg',qty:0.5,total:700}],sub:900,disc:0,total:900,recv:1000,change:100});
+
+function renderSettings() {
+  $$('[data-k]').forEach(el => el.value = S.settings[el.dataset.k] ?? '');
+  $('#printerHint').textContent = HINTS[S.settings.printer] || '';
+  $('#btConnect').hidden = S.settings.printer !== 'ble';
 }
 
-/* ============ backup ============ */
-async function markBackup(){S.settings.lastBackup=Date.now();await kvSet('settings',S.settings);hideBanner();}
-function hideBanner(){$('#banner').hidden=true;}
-async function checkBackup(){
-  const c=(await kvGet('counter'))||0;
-  const old=Date.now()-(S.settings.lastBackup||0)>24*3600*1000;
-  const b=$('#banner');
-  if(c>0&&old){b.hidden=false;b.innerHTML='Backup nahi liya (24 ghante se zyada). <b style="text-decoration:underline" id="bnGo">Abhi backup lein</b>';$('#bnGo').onclick=()=>exportBackup();}
-  else b.hidden=true;
+async function setSetting(k, v) {
+  S.settings[k] = v;
+  await kvSet('settings', S.settings);
+  if (k === 'shop') renderShell();
+  if (k === 'printer') renderSettings();
 }
-async function shareOrDownload(file){
-  if(navigator.canShare&&navigator.canShare({files:[file]})){
-    try{await navigator.share({files:[file],title:file.name});return true;}catch(e){if(e&&e.name==='AbortError')return false;}
+
+async function testPrint(target = 'customer') {
+  const now = Date.now();
+  await printSale({
+    no: 99,
+    ts: now,
+    day: dayKey(),
+    note: 'Table 3 (Test)',
+    lines: [
+      { name: 'Gulab Jamun', price: 1400, unit: 'kg', qty: 1, total: 1400 },
+      { name: 'Samosa', price: 40, unit: 'pc', qty: 4, total: 160 }
+    ],
+    sub: 1560,
+    disc: 60,
+    total: 1500,
+    recv: 2000,
+    change: 500
+  }, target);
+}
+
+/* ============ BACKUP ============ */
+async function markBackup() {
+  S.settings.lastBackup = Date.now();
+  await kvSet('settings', S.settings);
+  hideBanner();
+}
+function hideBanner() { $('#banner').hidden = true; }
+
+async function checkBackup() {
+  const c = (await kvGet('counter')) || 0;
+  const old = Date.now() - (S.settings.lastBackup || 0) > 24 * 3600 * 1000;
+  const b = $('#banner');
+  if (c > 0 && old) {
+    b.hidden = false;
+    b.innerHTML = 'Backup nahi liya (24 ghante se zyada). <b style="text-decoration:underline;cursor:pointer" id="bnGo">Abhi backup lein</b>';
+    $('#bnGo').onclick = () => exportBackup();
+  } else {
+    b.hidden = true;
   }
-  const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=file.name;document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href),8000);return true;
-}
-async function exportBackup(){
-  const data={app:'aljannat-pos',v:1,at:Date.now(),items:S.items,settings:S.settings,counter:(await kvGet('counter'))||0,sales:await salesAll()};
-  const file=new File([JSON.stringify(data)],'aljannat-backup-'+dayKey()+'.json',{type:'application/json'});
-  if(await shareOrDownload(file)){await markBackup();toast('Backup tayyar');}
-}
-async function importBackup(file){
-  try{
-    const d=JSON.parse(await file.text());
-    if(d.app!=='aljannat-pos'||!Array.isArray(d.sales)||!Array.isArray(d.items))throw new Error('galat file');
-    if(!confirm('Backup wapas lene se maujooda data replace ho jayega ('+d.sales.length+' bills). Jari rakhein?'))return;
-    await P(st('sales','readwrite').clear());
-    for(const s of d.sales)await salePut(s);
-    S.items=d.items;await kvSet('items',S.items);
-    S.settings=Object.assign({},DEFAULT_SETTINGS,d.settings||{});await kvSet('settings',S.settings);
-    await kvSet('counter',d.counter||0);
-    renderShell();renderCats();renderGrid();renderSettings();await refreshToday();
-    toast('Backup wapas aa gaya');
-  }catch(e){toast('Backup file sahi nahi: '+e.message);}
-}
-async function exportCSV(){
-  const rows=[['Bill','Date','Time','Item','Qty','Unit','Rate','Line total','Bill discount','Bill total']];
-  (await salesAll()).sort((a,b)=>a.no-b.no).forEach(s=>{const d=new Date(s.ts);
-    s.lines.forEach(l=>rows.push([billLabel(s.no),s.day,pad(d.getHours())+':'+pad(d.getMinutes()),l.name,l.qty,l.unit,l.price,l.total,s.disc,s.total]));});
-  const csv='﻿'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
-  await shareOrDownload(new File([csv],'aljannat-sales-'+dayKey()+'.csv',{type:'text/csv'}));
 }
 
-/* ============ events ============ */
-function bind(){
-  $$('nav button').forEach(b=>b.onclick=()=>show(b.dataset.v));
-  $('#q').oninput=e=>{S.q=e.target.value;renderGrid();};
-  $('#cats').onclick=e=>{const c=e.target.closest('.chip');if(!c)return;S.cat=c.dataset.c;renderCats();renderGrid();};
-  $('#grid').onclick=e=>{const c=e.target.closest('.card');if(c)addToCart(c.dataset.id);};
-  $('#openCart').onclick=openCart;
-  $('#cartLines').onclick=cartAction;
-  $('#cartLines').onchange=cartQtyChange;
-  $('#disc').oninput=renderTotals;
-  $('#recv').oninput=renderTotals;
-  $('#quick').onclick=e=>{const b=e.target.closest('button');if(!b)return;$('#recv').value=b.dataset.r;renderTotals();};
-  $('#savePrint').onclick=()=>saveSale(true);
-  $('#saveOnly').onclick=()=>saveSale(false);
-  $('#clearCart').onclick=()=>{if(!S.cart.length||confirm('Cart khali karein?')){S.cart=[];$('#disc').value='';$('#recv').value='';$('#cartDlg').close();updateBadges();renderCartBar();}};
-  $$('dialog').forEach(d=>{d.addEventListener('click',e=>{if(e.target===d)d.close();});});
-  $$('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
-  $('#billDay').onchange=renderBills;
-  $('#billList').onclick=e=>{const b=e.target.closest('.it');if(b)openBill(+b.dataset.no);};
-  $('#bdPrint').onclick=()=>{if(S.billOpen)printSale(S.billOpen);};
-  $('#bdDel').onclick=async()=>{if(!S.billOpen)return;if(!confirm('Bill '+billLabel(S.billOpen.no)+' delete karein?'))return;await saleDel(S.billOpen.no);$('#billDlg').close();renderBills();refreshToday();};
-  $('#addItem').onclick=()=>openItem(null);
-  $('#itemList').onclick=e=>{const b=e.target.closest('.it');if(b)openItem(b.dataset.id);};
-  $('#itemSave').onclick=saveItem;
-  $('#itemDel').onclick=delItem;
-  $$('[data-k]').forEach(el=>el.onchange=()=>setSetting(el.dataset.k,el.value));
-  $('#btConnect').onclick=async()=>{try{await bleConnect();toast('Printer jur gaya: '+(bleDev.name||''));}catch(e){toast(e.message||'Connect nahi hua');}};
-  $('#testPrint').onclick=testPrint;
-  $('#bkExport').onclick=exportBackup;
-  $('#bkImport').onclick=()=>$('#bkFile').click();
-  $('#bkFile').onchange=e=>{const f=e.target.files[0];if(f)importBackup(f);e.target.value='';};
-  $('#csvExport').onclick=exportCSV;
+async function shareOrDownload(file) {
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: file.name }); return true; }
+    catch (e) { if (e && e.name === 'AbortError') return false; }
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(file);
+  a.download = file.name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 8000);
+  return true;
 }
-init().catch(e=>{document.body.insertAdjacentHTML('afterbegin','<pre style="padding:16px;color:#b3261e">Start nahi hua: '+esc(e&&e.message||e)+'</pre>');});
+
+async function exportBackup() {
+  const data = {
+    app: 'aljannat-pos',
+    v: 2,
+    at: Date.now(),
+    items: S.items,
+    settings: S.settings,
+    counter: (await kvGet('counter')) || 0,
+    sales: await salesAll()
+  };
+  const file = new File([JSON.stringify(data)], 'aljannat-backup-' + dayKey() + '.json', { type: 'application/json' });
+  if (await shareOrDownload(file)) {
+    await markBackup();
+    toast('Backup tayyar');
+  }
+}
+
+async function importBackup(file) {
+  try {
+    const d = JSON.parse(await file.text());
+    if (d.app !== 'aljannat-pos' || !Array.isArray(d.sales) || !Array.isArray(d.items)) throw new Error('Galat file format');
+    if (!confirm('Backup wapas lene se maujooda data replace ho jayega (' + d.sales.length + ' bills). Jari rakhein?')) return;
+    await P(st('sales', 'readwrite').clear());
+    for (const s of d.sales) await salePut(s);
+    S.items = d.items;
+    await kvSet('items', S.items);
+    S.settings = Object.assign({}, DEFAULT_SETTINGS, d.settings || {});
+    await kvSet('settings', S.settings);
+    await kvSet('counter', d.counter || 0);
+    renderShell();
+    renderCats();
+    renderGrid();
+    renderSettings();
+    await refreshToday();
+    toast('Backup wapas aa gaya');
+  } catch (e) {
+    toast('Backup file sahi nahi: ' + e.message);
+  }
+}
+
+async function exportCSV() {
+  const rows = [['Bill', 'Date', 'Time', 'Note', 'Item', 'Qty', 'Unit', 'Rate', 'Line total', 'Bill discount', 'Bill total']];
+  (await salesAll()).sort((a, b) => a.no - b.no).forEach(s => {
+    const d = new Date(s.ts);
+    s.lines.forEach(l => {
+      rows.push([
+        billLabel(s.no),
+        s.day,
+        pad(d.getHours()) + ':' + pad(d.getMinutes()),
+        s.note || '',
+        l.name,
+        l.qty,
+        l.unit,
+        l.price,
+        l.total,
+        s.disc,
+        s.total
+      ]);
+    });
+  });
+  const csv = '\uFEFF' + rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+  await shareOrDownload(new File([csv], 'aljannat-sales-' + dayKey() + '.csv', { type: 'text/csv' }));
+}
+
+/* ============ EVENTS BINDING ============ */
+function bind() {
+  // Navigation
+  $$('nav button').forEach(b => b.onclick = () => show(b.dataset.v));
+
+  // Search & Categories
+  $('#q').oninput = e => {
+    S.q = e.target.value;
+    $('#qClear').classList.toggle('on', !!S.q);
+    renderGrid();
+  };
+  $('#qClear').onclick = () => {
+    $('#q').value = '';
+    S.q = '';
+    $('#qClear').classList.remove('on');
+    renderGrid();
+  };
+  $('#cats').onclick = e => {
+    const c = e.target.closest('.chip');
+    if (!c) return;
+    S.cat = c.dataset.c;
+    renderCats();
+    renderGrid();
+  };
+  $('#grid').onclick = e => {
+    const c = e.target.closest('.card');
+    if (c) addToCart(c.dataset.id);
+  };
+
+  // Cart Modal & Actions
+  $('#openCart').onclick = openCart;
+  $('#cartLines').onclick = cartAction;
+  $('#cartLines').onchange = cartQtyChange;
+  $('#disc').oninput = renderTotals;
+  $('#recv').oninput = renderTotals;
+  $('#quick').onclick = e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    $('#recv').value = b.dataset.r;
+    renderTotals();
+  };
+
+  // Kitchen note quick chips
+  $('#kChips').onclick = e => {
+    const b = e.target.closest('.k-chip');
+    if (!b) return;
+    const inp = $('#kNote');
+    inp.value = b.dataset.val;
+    inp.focus();
+  };
+
+  // Checkout buttons
+  $('#saveBoth').onclick = () => saveSale('both');
+  $('#saveKitchen').onclick = () => saveSale('kitchen');
+  $('#saveCustomer').onclick = () => saveSale('customer');
+  $('#saveOnly').onclick = () => saveSale(null);
+  $('#clearCart').onclick = () => {
+    if (!S.cart.length || confirm('Cart khali karein?')) {
+      S.cart = [];
+      $('#disc').value = '';
+      $('#recv').value = '';
+      $('#kNote').value = '';
+      $('#cartDlg').close();
+      updateBadges();
+      renderCartBar();
+    }
+  };
+
+  // Close modals
+  $$('dialog').forEach(d => {
+    d.addEventListener('click', e => { if (e.target === d) d.close(); });
+  });
+  $$('[data-close]').forEach(b => b.onclick = () => b.closest('dialog').close());
+
+  // Bills view filters
+  $('#billDay').onchange = renderBills;
+  $('#billTodayBtn').onclick = () => { $('#billDay').value = dayKey(); renderBills(); };
+  $('#billYestBtn').onclick = () => {
+    const yest = new Date(Date.now() - 86400000);
+    $('#billDay').value = dayKey(yest);
+    renderBills();
+  };
+  $('#billList').onclick = e => {
+    const b = e.target.closest('.it');
+    if (b) openBill(+b.dataset.no);
+  };
+
+  // Bill detail modal tabs & print
+  $('#tabRcptCust').onclick = () => { S.billTab = 'customer'; renderBillPreview(); };
+  $('#tabRcptKitch').onclick = () => { S.billTab = 'kitchen'; renderBillPreview(); };
+  $('#bdPrintBoth').onclick = () => { if (S.billOpen) printSale(S.billOpen, 'both'); };
+  $('#bdPrintCust').onclick = () => { if (S.billOpen) printSale(S.billOpen, 'customer'); };
+  $('#bdPrintKitch').onclick = () => { if (S.billOpen) printSale(S.billOpen, 'kitchen'); };
+  $('#bdDel').onclick = async () => {
+    if (!S.billOpen) return;
+    if (!confirm('Bill ' + billLabel(S.billOpen.no) + ' delete karein?')) return;
+    await saleDel(S.billOpen.no);
+    $('#billDlg').close();
+    renderBills();
+    refreshToday();
+  };
+
+  // Items view
+  $('#itemSearch').oninput = e => { S.itemQ = e.target.value; renderItems(); };
+  $('#addItem').onclick = () => openItem(null);
+  $('#itemList').onclick = e => {
+    const b = e.target.closest('.it');
+    if (b) openItem(b.dataset.id);
+  };
+  $('#itemSave').onclick = saveItem;
+  $('#itemDel').onclick = delItem;
+
+  // Settings
+  $$('[data-k]').forEach(el => el.onchange = () => setSetting(el.dataset.k, el.value));
+  $('#btConnect').onclick = async () => {
+    try {
+      await bleConnect();
+      toast('Printer jur gaya: ' + (bleDev.name || ''));
+    } catch (e) {
+      toast(e.message || 'Connect nahi hua');
+    }
+  };
+  $('#testPrintCustomer').onclick = () => testPrint('customer');
+  $('#testPrintKitchen').onclick = () => testPrint('kitchen');
+  $('#bkExport').onclick = exportBackup;
+  $('#bkImport').onclick = () => $('#bkFile').click();
+  $('#bkFile').onchange = e => {
+    const f = e.target.files[0];
+    if (f) importBackup(f);
+    e.target.value = '';
+  };
+  $('#csvExport').onclick = exportCSV;
+}
+
+init().catch(e => {
+  document.body.insertAdjacentHTML('afterbegin', '<pre style="padding:16px;color:#b3261e">Start nahi hua: ' + esc(e && e.message || e) + '</pre>');
+});
 </script>
 </body>
 </html>
