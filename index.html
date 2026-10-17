@@ -484,6 +484,56 @@ h2 {
   background: var(--bad);
   color: #fff;
 }
+
+/* PAYMENT METHOD SELECTOR */
+.pay-methods { display:flex; gap:6px; flex-wrap:wrap; margin:6px 0 10px; }
+.pay-btn { flex:1; min-width:70px; padding:7px 4px; border-radius:10px; border:1.5px solid var(--line); background:#fff; font-size:13px; font-weight:600; color:var(--mute); transition:all 0.15s; text-align:center; }
+.pay-btn.on { background:var(--maroon); border-color:var(--maroon); color:#fff; }
+
+/* DISCOUNT TYPE TOGGLE */
+.disc-row { display:flex; gap:6px; align-items:center; margin-bottom:4px; }
+.disc-toggle { display:flex; border:1.5px solid var(--line); border-radius:9px; overflow:hidden; }
+.disc-toggle button { padding:7px 14px; font-size:13.5px; font-weight:600; color:var(--mute); background:#fff; border:none; transition:all 0.15s; }
+.disc-toggle button.on { background:var(--maroon); color:#fff; }
+.disc-calc { font-size:12.5px; color:var(--ok); font-weight:600; margin-top:2px; }
+
+/* HOLD ORDER CHIPS */
+.held-bar { display:flex; gap:6px; flex-wrap:nowrap; overflow-x:auto; padding:0 0 8px; scrollbar-width:none; }
+.held-bar::-webkit-scrollbar { display:none; }
+.held-chip { display:inline-flex; align-items:center; gap:5px; background:#fff3e0; border:1.5px solid #f59e0b; border-radius:20px; padding:5px 10px; font-size:12.5px; font-weight:600; color:#92400e; white-space:nowrap; flex-shrink:0; }
+.held-chip .hc-x { background:#f59e0b; color:#fff; border-radius:50%; width:16px; height:16px; display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; }
+
+/* KPI CARDS */
+.kpi-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:0 0 12px; }
+.kpi { background:#fff; border:1.5px solid var(--line); border-radius:14px; padding:11px 13px; box-shadow:var(--shadow-sm); }
+.kpi small { color:var(--mute); font-size:11.5px; font-weight:500; display:block; }
+.kpi b { font-size:18px; font-weight:800; color:var(--maroon); display:block; margin-top:3px; }
+.kpi.week b { color:#0369a1; }
+.kpi.month b { color:#059669; }
+.kpi.count b { color:#7c3aed; }
+
+/* PAYMENT BREAKDOWN */
+.pay-breakdown { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:8px 0; }
+.pay-bd-item { background:#fff; border:1.5px solid var(--line); border-radius:10px; padding:8px 10px; }
+.pay-bd-item small { font-size:11px; color:var(--mute); display:block; }
+.pay-bd-item b { font-size:14px; font-weight:700; color:var(--ink); }
+
+/* PAYMENT METHOD BADGE ON BILL LIST */
+.tag-pay { display:inline-block; padding:1px 6px; border-radius:5px; font-size:11px; font-weight:600; }
+.tag-pay.cash { background:#dcfce7; color:#15803d; }
+.tag-pay.jazz { background:#fce7f3; color:#9d174d; }
+.tag-pay.easy { background:#ede9fe; color:#6d28d9; }
+.tag-pay.card { background:#dbeafe; color:#1d4ed8; }
+
+/* NUMPAD DIALOG */
+#numpadDlg .dlg { max-height:85vh; }
+.numpad-display { font-size:32px; font-weight:800; text-align:center; color:var(--maroon); padding:12px; background:var(--cream); border-radius:12px; margin-bottom:10px; min-height:52px; }
+.numpad-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.np-key { height:56px; border-radius:12px; border:1.5px solid var(--line); background:#fff; font-size:20px; font-weight:700; color:var(--ink); transition:background 0.1s; }
+.np-key:active { background:var(--cream); }
+.np-key.fn { background:var(--cream); font-size:15px; color:var(--mute); }
+.np-key.ok { background:var(--maroon); color:#fff; font-size:15px; border-color:var(--maroon); }
+
 .btn-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1109,6 +1159,7 @@ dialog::backdrop {
 <main>
   <!-- 1. SALE VIEW -->
   <section id="v-sale">
+    <div id="heldBar" class="held-bar" hidden></div>
     <div class="search-box">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
       <input id="q" class="search" type="search" placeholder="Item dhoondein (jaise Gulab Jamun, Samosa)..." autocomplete="off">
@@ -1118,10 +1169,15 @@ dialog::backdrop {
     <div id="grid" class="grid"></div>
   </section>
 
-  <!-- 2. BILLS & REPORTS VIEW -->
+  <!-- 2. DASHBOARD & BILLS VIEW -->
   <section id="v-bills" hidden>
-    <h2>Bills &amp; Hisaab (Live Cloud Sync)</h2>
-    <div class="row">
+    <div class="kpi-grid">
+      <div class="kpi"><small>Aaj ki Sale</small><b id="kpiToday">Rs. 0</b></div>
+      <div class="kpi count"><small>Aaj ke Bills</small><b id="kpiCount">0</b></div>
+      <div class="kpi week"><small>Is Hafte</small><b id="kpiWeek">Rs. 0</b></div>
+      <div class="kpi month"><small>Is Mahine</small><b id="kpiMonth">Rs. 0</b></div>
+    </div>
+    <div class="row" style="margin-bottom:8px">
       <input id="billDay" type="date" class="f" style="flex:1">
       <button class="btn alt" id="billTodayBtn" style="padding:10px 14px;white-space:nowrap">Aaj</button>
       <button class="btn gray" id="billYestBtn" style="padding:10px 14px;white-space:nowrap">Kal</button>
@@ -1130,8 +1186,9 @@ dialog::backdrop {
       <div class="stat"><small>Kul Bills</small><b id="stCount">0</b></div>
       <div class="stat"><small>Kul Sale</small><b id="stTotal">Rs. 0</b></div>
     </div>
+    <div class="pay-breakdown" id="payBreakdown"></div>
     <div id="topItems"></div>
-    <h2 style="margin-top:20px">Bills ki list</h2>
+    <h2 style="margin-top:14px;margin-bottom:8px">Bills ki List</h2>
     <div id="billList" class="list"></div>
   </section>
 
@@ -1255,8 +1312,8 @@ dialog::backdrop {
     <span>Sale</span>
   </button>
   <button data-v="bills">
-    <svg viewBox="0 0 24 24"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6"/></svg>
-    <span>Bills</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M6 8h4M6 11h8M6 14h3"/></svg>
+    <span>Dashboard</span>
   </button>
   <button data-v="items">
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
@@ -1274,16 +1331,33 @@ dialog::backdrop {
   <div class="hd"><b>Bill Banayein</b><button class="x" data-close>×</button></div>
   <div class="bd2">
     <div id="cartLines"></div>
-    <label>Discount (Rs.)</label>
-    <input id="disc" class="f" type="number" inputmode="decimal" min="0" placeholder="0">
-    <div style="margin-top:12px">
+    <!-- DISCOUNT -->
+    <div class="disc-row" style="margin-top:10px">
+      <span style="font-size:13px;color:var(--mute);font-weight:500">Discount:</span>
+      <div class="disc-toggle">
+        <button id="discTypeRs" class="on" onclick="setDiscType('rs')">Rs.</button>
+        <button id="discTypePct" onclick="setDiscType('pct')">%</button>
+      </div>
+      <input id="disc" class="f" type="number" inputmode="decimal" min="0" placeholder="0" style="flex:1;margin:0">
+    </div>
+    <div class="disc-calc" id="discCalc"></div>
+    <div style="margin-top:8px">
       <div class="tot"><span>Subtotal</span><span id="tSub">Rs. 0</span></div>
       <div class="tot"><span>Discount</span><span id="tDisc">Rs. 0</span></div>
       <div class="tot big"><span>Total Bill</span><span id="tTot">Rs. 0</span></div>
     </div>
 
-    <!-- PAYMENT -->
-    <label>Customer ne diye (Rs.) — khali chorein to exact</label>
+    <!-- PAYMENT METHOD -->
+    <label style="margin-top:10px;margin-bottom:4px">Payment ka tareeqa:</label>
+    <div class="pay-methods">
+      <button class="pay-btn on" data-pm="cash" onclick="setPayMethod('cash')">💵 Cash</button>
+      <button class="pay-btn" data-pm="jazz" onclick="setPayMethod('jazz')">📱 JazzCash</button>
+      <button class="pay-btn" data-pm="easy" onclick="setPayMethod('easy')">🟣 Easypaisa</button>
+      <button class="pay-btn" data-pm="card" onclick="setPayMethod('card')">💳 Card</button>
+    </div>
+
+    <!-- RECEIVED AMOUNT -->
+    <label style="margin-top:6px">Customer ne diye (Rs.) — khali chorein to exact</label>
     <input id="recv" class="f" type="number" inputmode="decimal" min="0" placeholder="Exact">
     <div class="quick" id="quick"></div>
     <div class="change-box ok" id="changeBox">
@@ -1321,7 +1395,35 @@ dialog::backdrop {
     </div>
     <div class="btn-grid-2">
       <button class="btn gray" id="saveOnly">Sirf save karein</button>
-      <button class="btn" id="clearCart" style="background:#fee2e2;color:#b91c1c;border:1.5px solid #f87171;font-weight:700">✕ Order Dismiss Karein</button>
+      <button class="btn" id="holdOrder" style="background:#fff7ed;color:#c2410c;border:1.5px solid #fb923c;font-weight:700">⏸ Hold Karein</button>
+    </div>
+    <button class="btn" id="clearCart" style="background:#fee2e2;color:#b91c1c;border:1.5px solid #f87171;font-weight:700;width:100%">✕ Order Dismiss Karein</button>
+  </div>
+</div></dialog>
+
+<!-- NUMPAD DIALOG -->
+<dialog id="numpadDlg"><div class="dlg">
+  <div class="sheet-handle"></div>
+  <div class="hd"><b>Quantity daalen</b><button class="x" data-close>×</button></div>
+  <div class="bd2">
+    <div class="numpad-display" id="npDisplay">0</div>
+    <div class="numpad-grid">
+      <button class="np-key" data-nk="7">7</button>
+      <button class="np-key" data-nk="8">8</button>
+      <button class="np-key" data-nk="9">9</button>
+      <button class="np-key" data-nk="4">4</button>
+      <button class="np-key" data-nk="5">5</button>
+      <button class="np-key" data-nk="6">6</button>
+      <button class="np-key" data-nk="1">1</button>
+      <button class="np-key" data-nk="2">2</button>
+      <button class="np-key" data-nk="3">3</button>
+      <button class="np-key fn" data-nk=".">•</button>
+      <button class="np-key" data-nk="0">0</button>
+      <button class="np-key fn" data-nk="del">⌫</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+      <button class="np-key fn" data-nk="cancel" style="height:48px">Cancel</button>
+      <button class="np-key ok" data-nk="ok" style="height:48px">✓ OK</button>
     </div>
   </div>
 </div></dialog>
@@ -1596,9 +1698,12 @@ const S = {
   view: 'sale',
   editId: null,
   billOpen: null,
-  billTab: 'customer'
+  billTab: 'customer',
+  held: [],
+  payMethod: 'cash',
+  discType: 'rs'
 };
-const VERSION = 'v3.0 (Cloud Sync)';
+const VERSION = 'v4.0 (Pro POS)';
 
 /* ============ PIN LOGIN SYSTEM ============ */
 let currentPinInput = '';
@@ -1677,6 +1782,7 @@ async function init() {
   S.items = items;
   S.settings = Object.assign({}, DEFAULT_SETTINGS, (await kvGet('settings')) || {});
   S.counter = (await kvGet('counter')) || 0;
+  S.held = (await kvGet('held')) || [];
 
   try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {}
   $('#ver').textContent = VERSION;
@@ -1684,6 +1790,7 @@ async function init() {
   renderShell();
   renderCats();
   renderGrid();
+  renderHeldBar();
   renderCartBar();
   await refreshToday();
   await checkBackup();
@@ -1769,7 +1876,11 @@ function addToCart(id) {
 }
 const lineTotal = l => Math.round(l.qty * l.price);
 const subtotal = () => S.cart.reduce((a, l) => a + lineTotal(l), 0);
-const discount = () => Math.min(subtotal(), Math.max(0, Number($('#disc').value) || 0));
+const discount = () => {
+  const v = Math.max(0, Number($('#disc').value) || 0);
+  if (S.discType === 'pct') return Math.min(subtotal(), Math.round(subtotal() * v / 100));
+  return Math.min(subtotal(), v);
+};
 const total = () => subtotal() - discount();
 
 function renderCartBar() {
@@ -1791,7 +1902,7 @@ function renderCartDlg() {
       <div class="c">
         <div class="q">
           <button data-a="dec">−</button>
-          <input data-a="qty" type="number" inputmode="decimal" step="any" value="${qtyFmt(l.qty)}">
+          <input data-a="qty" readonly style="cursor:pointer" type="text" value="${qtyFmt(l.qty)}">
           <button data-a="inc">+</button>
           <small style="color:var(--mute)">${l.unit === 'kg' ? 'kg' : 'pc'} × ${num(l.price)}</small>
         </div>
@@ -1805,6 +1916,13 @@ function renderTotals() {
   $('#tSub').textContent = rs(sub);
   $('#tDisc').textContent = d ? '− ' + rs(d) : rs(0);
   $('#tTot').textContent = rs(t);
+  const calcEl = $('#discCalc');
+  if (calcEl) {
+    const v = Math.max(0, Number($('#disc').value) || 0);
+    if (v > 0 && S.discType === 'pct') calcEl.textContent = '= Rs. ' + num(d) + ' discount';
+    else if (v > 0 && S.discType === 'rs') calcEl.textContent = (sub > 0 ? num(Math.round(v / sub * 100)) : '0') + '% of subtotal';
+    else calcEl.textContent = '';
+  }
 
   const rawRecv = $('#recv').value;
   const r = rawRecv === '' ? t : Number(rawRecv) || 0;
@@ -1880,6 +1998,7 @@ async function saveSale(printTarget) {
     ts: now.getTime(),
     day: dayKey(now),
     note: note,
+    payMethod: S.payMethod || 'cash',
     lines: S.cart.map(l => ({ id: l.id, name: l.name, price: l.price, unit: l.unit, qty: l.qty, total: lineTotal(l) })),
     sub: subtotal(),
     disc: discount(),
@@ -1896,6 +2015,10 @@ async function saveSale(printTarget) {
   $('#disc').value = '';
   $('#recv').value = '';
   $('#kNote').value = '';
+  S.payMethod = 'cash';
+  S.discType = 'rs';
+  setDiscType('rs');
+  setPayMethod('cash');
   $('#cartDlg').close();
   updateBadges();
   renderCartBar();
@@ -2159,11 +2282,46 @@ async function printSale(s, target = 'customer') {
 async function renderBills() {
   const inp = $('#billDay');
   if (!inp.value) inp.value = dayKey();
-  const list = (await salesDay(inp.value)).sort((a, b) => b.no - a.no);
+  const day = inp.value;
+  const list = (await salesDay(day)).sort((a, b) => b.no - a.no);
 
+  // KPI calculations — only when viewing today's date or on dashboard load
+  const todayList = await salesDay(dayKey());
+  const todaySale = todayList.reduce((a, s) => a + s.total, 0);
+  $('#kpiToday').textContent = rs(todaySale);
+  $('#kpiCount').textContent = todayList.length;
+
+  // This week (Mon–today)
+  const weekSales = await Promise.all([0,1,2,3,4,5,6].map(i => {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    return salesDay(dayKey(d));
+  }));
+  const weekTotal = weekSales.flat().reduce((a, s) => a + s.total, 0);
+  $('#kpiWeek').textContent = rs(weekTotal);
+
+  // This month
+  const monthSales = [];
+  const now2 = new Date();
+  for (let d = 1; d <= now2.getDate(); d++) {
+    const dd = new Date(now2.getFullYear(), now2.getMonth(), d);
+    monthSales.push(...(await salesDay(dayKey(dd))));
+  }
+  const monthTotal = monthSales.reduce((a, s) => a + s.total, 0);
+  $('#kpiMonth').textContent = rs(monthTotal);
+
+  // Selected day stats
   $('#stCount').textContent = list.length;
   $('#stTotal').textContent = rs(list.reduce((a, s) => a + s.total, 0));
 
+  // Payment breakdown for selected day
+  const pm = { cash: 0, jazz: 0, easy: 0, card: 0 };
+  list.forEach(s => { const k = s.payMethod || 'cash'; if (pm[k] !== undefined) pm[k] += s.total; });
+  const pmLabels = { cash: '💵 Cash', jazz: '📱 JazzCash', easy: '🟣 Easypaisa', card: '💳 Card' };
+  $('#payBreakdown').innerHTML = Object.keys(pm).filter(k => pm[k] > 0).map(k =>
+    `<div class="pay-bd-item"><small>${pmLabels[k]}</small><b>${rs(pm[k])}</b></div>`
+  ).join('');
+
+  // Top items
   const m = {};
   list.forEach(s => s.lines.forEach(l => {
     const k = l.name + '|' + l.unit;
@@ -2171,19 +2329,24 @@ async function renderBills() {
     m[k].qty += l.qty;
     m[k].total += l.total;
   }));
-
-  const top = Object.values(m).sort((a, b) => b.total - a.total);
+  const top = Object.values(m).sort((a, b) => b.total - a.total).slice(0, 8);
+  const maxT = top[0] ? top[0].total : 1;
   $('#topItems').innerHTML = top.length ? `
-    <h2>Item ke hisaab se bikri</h2>
+    <h2 style="margin:10px 0 8px;font-size:15px">🏆 Top Items (${day === dayKey() ? 'Aaj' : day})</h2>
     <div class="list">${top.map(t => `
-      <div class="it">
-        <div class="l">
+      <div class="it" style="flex-direction:column;align-items:flex-start;gap:4px">
+        <div style="display:flex;justify-content:space-between;width:100%">
           <b>${esc(t.name)}</b>
-          <small>${qtyFmt(t.qty)} ${t.unit === 'kg' ? 'kg' : 'pc'}</small>
+          <span style="font-weight:700;color:var(--maroon)">${rs(t.total)}</span>
         </div>
-        <div class="r">${rs(t.total)}</div>
+        <div style="width:100%;background:var(--line);border-radius:4px;height:5px;overflow:hidden">
+          <div style="height:100%;background:var(--maroon);border-radius:4px;width:${Math.round(t.total/maxT*100)}%"></div>
+        </div>
+        <small style="color:var(--mute)">${qtyFmt(t.qty)} ${t.unit === 'kg' ? 'kg' : 'pcs'}</small>
       </div>`).join('')}</div>` : '';
 
+  // Bill list
+  const pmClass = { cash:'cash', jazz:'jazz', easy:'easy', card:'card' };
   $('#billList').innerHTML = list.length ? list.map(s => `
     <button class="it" data-no="${s.no}">
       <div class="l">
@@ -2192,6 +2355,7 @@ async function renderBills() {
           <span>${pad(new Date(s.ts).getHours())}:${pad(new Date(s.ts).getMinutes())}</span>
           <span>· ${s.lines.length} items</span>
           ${s.note ? `<span class="tag">${esc(s.note)}</span>` : ''}
+          <span class="tag-pay ${pmClass[s.payMethod||'cash'] || 'cash'}">${pmLabels[s.payMethod||'cash']||'Cash'}</span>
         </small>
       </div>
       <div class="r">${rs(s.total)}</div>
@@ -2494,6 +2658,130 @@ async function exportCSV() {
   await shareOrDownload(new File([csv], 'aljannat-sales-' + dayKey() + '.csv', { type: 'text/csv' }));
 }
 
+/* ============ PAYMENT METHOD ============ */
+function setPayMethod(pm) {
+  S.payMethod = pm;
+  $$('.pay-btn').forEach(b => b.classList.toggle('on', b.dataset.pm === pm));
+}
+
+/* ============ DISCOUNT TYPE ============ */
+function setDiscType(type) {
+  S.discType = type;
+  $('#discTypeRs').classList.toggle('on', type === 'rs');
+  $('#discTypePct').classList.toggle('on', type === 'pct');
+  $('#disc').placeholder = type === 'pct' ? '0' : '0';
+  renderTotals();
+}
+
+/* ============ HOLD ORDER ============ */
+function holdOrder() {
+  if (!S.cart.length) { toast('Cart khali hai'); return; }
+  const held = {
+    id: Date.now(),
+    cart: JSON.parse(JSON.stringify(S.cart)),
+    discVal: $('#disc').value,
+    discType: S.discType,
+    payMethod: S.payMethod,
+    note: $('#kNote').value,
+    ts: Date.now()
+  };
+  S.held.push(held);
+  kvSet('held', S.held).catch(() => {});
+  S.cart = [];
+  $('#disc').value = '';
+  $('#recv').value = '';
+  $('#kNote').value = '';
+  S.payMethod = 'cash';
+  S.discType = 'rs';
+  setDiscType('rs');
+  setPayMethod('cash');
+  $('#cartDlg').close();
+  updateBadges();
+  renderCartBar();
+  renderHeldBar();
+  toast('Order hold ho gaya ⏸ — baad mein resume kar saktey hain');
+}
+
+function resumeHeld(id) {
+  const idx = S.held.findIndex(h => h.id === id);
+  if (idx < 0) return;
+  if (S.cart.length && !confirm('Current cart dismiss ho jayegi. Hold order resume karein?')) return;
+  const h = S.held.splice(idx, 1)[0];
+  kvSet('held', S.held).catch(() => {});
+  S.cart = h.cart;
+  S.discType = h.discType || 'rs';
+  S.payMethod = h.payMethod || 'cash';
+  renderHeldBar();
+  updateBadges();
+  renderCartBar();
+  openCart();
+  setTimeout(() => {
+    $('#disc').value = h.discVal || '';
+    $('#kNote').value = h.note || '';
+    setDiscType(S.discType);
+    setPayMethod(S.payMethod);
+    renderTotals();
+  }, 80);
+  toast('Order resume ho gaya!');
+}
+
+function deleteHeld(id) {
+  S.held = S.held.filter(h => h.id !== id);
+  kvSet('held', S.held).catch(() => {});
+  renderHeldBar();
+}
+
+function renderHeldBar() {
+  const bar = $('#heldBar');
+  if (!bar) return;
+  if (!S.held.length) { bar.hidden = true; return; }
+  bar.hidden = false;
+  const total = held => held.cart.reduce((a, l) => a + Math.round(l.qty * l.price), 0);
+  bar.innerHTML = S.held.map(h => `
+    <div class="held-chip">
+      <span onclick="resumeHeld(${h.id})" style="cursor:pointer">⏸ Order — ${rs(total(h))}</span>
+      <span class="hc-x" onclick="deleteHeld(${h.id})">×</span>
+    </div>`).join('');
+}
+
+/* ============ QUICK NUMPAD ============ */
+let npTarget = null;
+let npVal = '';
+
+function openNumpad(cartIdx) {
+  npTarget = cartIdx;
+  npVal = String(S.cart[cartIdx] ? qtyFmt(S.cart[cartIdx].qty) : '0');
+  $('#npDisplay').textContent = npVal;
+  $('#numpadDlg').showModal();
+}
+
+function handleNpKey(k) {
+  if (k === 'cancel') { $('#numpadDlg').close(); return; }
+  if (k === 'ok') {
+    const v = parseFloat(npVal);
+    if (npTarget !== null && !isNaN(v) && v > 0) {
+      S.cart[npTarget].qty = Math.round(v * 1000) / 1000;
+    } else if (npTarget !== null && (isNaN(v) || v <= 0)) {
+      S.cart.splice(npTarget, 1);
+    }
+    $('#numpadDlg').close();
+    renderCartDlg();
+    renderCartBar();
+    updateBadges();
+    renderTotals();
+    return;
+  }
+  if (k === 'del') {
+    npVal = npVal.slice(0, -1) || '0';
+  } else if (k === '.') {
+    if (!npVal.includes('.')) npVal += '.';
+  } else {
+    if (npVal === '0') npVal = k;
+    else if (npVal.length < 7) npVal += k;
+  }
+  $('#npDisplay').textContent = npVal || '0';
+}
+
 /* ============ EVENTS BINDING ============ */
 function bind() {
   // PIN Keypad clicks
@@ -2584,11 +2872,25 @@ function bind() {
     inp.focus();
   };
 
+  // Qty numpad — open on click of qty input in cart
+  $('#cartLines').addEventListener('click', e => {
+    const inp = e.target;
+    if (inp.dataset.a === 'qty') {
+      const line = inp.closest('.cl');
+      if (line) openNumpad(+line.dataset.i);
+    }
+  });
+  $('#numpadDlg').addEventListener('click', e => {
+    const k = e.target.dataset.nk;
+    if (k !== undefined) handleNpKey(k);
+  });
+
   // Checkout buttons
   $('#saveBoth').onclick = () => saveSale('both');
   $('#saveKitchen').onclick = () => saveSale('kitchen');
   $('#saveCustomer').onclick = () => saveSale('customer');
   $('#saveOnly').onclick = () => saveSale(null);
+  $('#holdOrder').onclick = holdOrder;
   $('#clearCart').onclick = () => {
     if (!S.cart.length) {
       $('#cartDlg').close();
@@ -2599,6 +2901,10 @@ function bind() {
       $('#disc').value = '';
       $('#recv').value = '';
       $('#kNote').value = '';
+      S.payMethod = 'cash';
+      S.discType = 'rs';
+      setDiscType('rs');
+      setPayMethod('cash');
       $('#cartDlg').close();
       updateBadges();
       renderCartBar();
